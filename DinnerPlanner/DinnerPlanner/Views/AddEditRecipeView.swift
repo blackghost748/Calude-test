@@ -32,7 +32,7 @@ struct AddEditRecipeView: View {
                 Section("Quell-URL (optional)") {
                     TextField("https://...", text: $sourceURL)
                         .keyboardType(.URL)
-                        .autocapitalization(.none)
+                        .textInputAutocapitalization(.never)
                 }
                 Section("Zutaten") {
                     ForEach($ingredients) { $item in

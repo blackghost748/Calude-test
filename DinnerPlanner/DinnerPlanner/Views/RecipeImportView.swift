@@ -26,7 +26,7 @@ struct RecipeImportView: View {
                 if selectedTab == .url {
                     Section("Rezept-URL") {
                         TextField("https://www.chefkoch.de/...", text: $urlText)
-                            .keyboardType(.URL).autocapitalization(.none)
+                            .keyboardType(.URL).textInputAutocapitalization(.never)
                         Text("Unterstützt Seiten mit strukturierten Rezeptdaten (JSON-LD).")
                             .font(.caption).foregroundColor(.secondary)
                     }

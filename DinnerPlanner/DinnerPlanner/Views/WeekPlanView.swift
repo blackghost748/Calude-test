@@ -4,7 +4,6 @@ struct WeekPlanView: View {
     @EnvironmentObject private var store: DataStore
     @State private var selectedWeekday: Int?
     @State private var showingPicker = false
-    @Environment(\.horizontalSizeClass) private var hSizeClass
 
     private let weekdays = [(1,"Mo","Montag"),(2,"Di","Dienstag"),(3,"Mi","Mittwoch"),
                             (4,"Do","Donnerstag"),(5,"Fr","Freitag"),(6,"Sa","Samstag"),
@@ -25,8 +24,8 @@ struct WeekPlanView: View {
                 weekday: 2,
                 weekOfYear: week,
                 yearForWeekOfYear: Int(parts[0]) ?? 2024
-            )) {
-                let sunday = cal.date(byAdding: .day, value: 6, to: monday)!
+            )),
+            let sunday = cal.date(byAdding: .day, value: 6, to: monday) {
                 return "\(fmt.string(from: monday))–\(fmt.string(from: sunday))"
             }
         }
@@ -35,11 +34,13 @@ struct WeekPlanView: View {
 
     var body: some View {
         NavigationView {
-            Group {
-                if hSizeClass == .regular {
-                    weekGrid
-                } else {
-                    weekList
+            GeometryReader { geo in
+                Group {
+                    if geo.size.width > geo.size.height {
+                        weekGrid
+                    } else {
+                        weekList
+                    }
                 }
             }
             .navigationTitle(navTitle)
