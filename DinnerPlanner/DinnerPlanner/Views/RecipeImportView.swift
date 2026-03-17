@@ -1,64 +1,50 @@
 import SwiftUI
-import SwiftData
 
 struct RecipeImportView: View {
-    @Environment(\.modelContext) private var modelContext
+    @EnvironmentObject private var store: DataStore
     @Environment(\.dismiss) private var dismiss
 
     @State private var selectedTab: ImportTab = .url
-    @State private var urlText: String = ""
-    @State private var pasteText: String = ""
-    @State private var recipeName: String = ""
+    @State private var urlText = ""
+    @State private var pasteText = ""
+    @State private var recipeName = ""
     @State private var isLoading = false
     @State private var errorMessage: String?
     @State private var importResult: RecipeImportResult?
-    @State private var showingPreview = false
 
-    enum ImportTab: String, CaseIterable {
-        case url = "URL"
-        case paste = "Text einfügen"
-    }
+    enum ImportTab: String, CaseIterable { case url = "URL"; case paste = "Text einfügen" }
 
     var body: some View {
-        NavigationStack {
+        NavigationView {
             Form {
-                Picker("Import-Methode", selection: $selectedTab) {
-                    ForEach(ImportTab.allCases, id: \.self) { tab in
-                        Text(tab.rawValue).tag(tab)
-                    }
+                Picker("Methode", selection: $selectedTab) {
+                    ForEach(ImportTab.allCases, id: \.self) { Text($0.rawValue).tag($0) }
                 }
                 .pickerStyle(.segmented)
                 .listRowBackground(Color.clear)
-                .listRowInsets(.init())
-                .padding(.vertical, 8)
 
                 if selectedTab == .url {
                     Section("Rezept-URL") {
                         TextField("https://www.chefkoch.de/...", text: $urlText)
-                            .keyboardType(.URL)
-                            .textInputAutocapitalization(.never)
-                        Text("Unterstützt Seiten mit strukturierten Rezeptdaten (z.B. Chefkoch, AllRecipes).")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
+                            .keyboardType(.URL).autocapitalization(.none)
+                        Text("Unterstützt Seiten mit strukturierten Rezeptdaten (JSON-LD).")
+                            .font(.caption).foregroundColor(.secondary)
                     }
                 } else {
                     Section("Rezeptname") {
                         TextField("z.B. Omas Gulasch", text: $recipeName)
                     }
                     Section("Zutaten einfügen (eine pro Zeile)") {
-                        TextEditor(text: $pasteText)
-                            .frame(minHeight: 150)
+                        TextEditor(text: $pasteText).frame(minHeight: 150)
                         Text("Beispiel:\n200 g Mehl\n3 Eier\n100 ml Milch")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
+                            .font(.caption).foregroundColor(.secondary)
                     }
                 }
 
                 if let error = errorMessage {
                     Section {
                         Label(error, systemImage: "exclamationmark.triangle")
-                            .foregroundStyle(.orange)
-                            .font(.subheadline)
+                            .foregroundColor(.orange).font(.subheadline)
                     }
                 }
             }
@@ -68,9 +54,7 @@ struct RecipeImportView: View {
                     Button("Abbrechen") { dismiss() }
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    if isLoading {
-                        ProgressView()
-                    } else {
+                    if isLoading { ProgressView() } else {
                         Button("Importieren") { runImport() }
                             .fontWeight(.semibold)
                             .disabled(importButtonDisabled)
@@ -91,18 +75,13 @@ struct RecipeImportView: View {
     }
 
     private func runImport() {
-        errorMessage = nil
-        isLoading = true
+        errorMessage = nil; isLoading = true
         Task {
             defer { isLoading = false }
             do {
-                if selectedTab == .url {
-                    let result = try await RecipeImportService.importFromURL(urlText)
-                    importResult = result
-                } else {
-                    let result = RecipeImportService.importFromText(pasteText, recipeName: recipeName)
-                    importResult = result
-                }
+                importResult = selectedTab == .url
+                    ? try await RecipeImportService.importFromURL(urlText)
+                    : RecipeImportService.importFromText(pasteText, recipeName: recipeName)
             } catch {
                 errorMessage = error.localizedDescription
             }
@@ -110,31 +89,26 @@ struct RecipeImportView: View {
     }
 
     private func saveResult(_ result: RecipeImportResult) {
-        let recipe = Recipe(name: result.name, defaultServings: result.defaultServings)
-        modelContext.insert(recipe)
-        for (idx, raw) in result.ingredients.enumerated() {
-            let ing = Ingredient(name: raw.name, amount: raw.amount, unit: raw.unit, sortOrder: idx)
-            ing.recipe = recipe
-            recipe.ingredients.append(ing)
-            modelContext.insert(ing)
+        let ingredients = result.ingredients.enumerated().map { idx, raw in
+            Ingredient(name: raw.name, amount: raw.amount, unit: raw.unit, sortOrder: idx)
         }
+        store.addRecipe(Recipe(name: result.name, defaultServings: result.defaultServings,
+                               ingredients: ingredients))
     }
 }
 
-extension RecipeImportResult: Identifiable {
-    public var id: String { name }
-}
+extension RecipeImportResult: Identifiable { public var id: String { name } }
 
 struct ImportPreviewView: View {
     let result: RecipeImportResult
     let onDone: (Bool) -> Void
 
     var body: some View {
-        NavigationStack {
+        NavigationView {
             List {
                 Section("Rezept") {
                     Text(result.name).font(.headline)
-                    Text("\(result.defaultServings) Portionen").foregroundStyle(.secondary)
+                    Text("\(result.defaultServings) Portionen").foregroundColor(.secondary)
                 }
                 Section("Erkannte Zutaten (\(result.ingredients.count))") {
                     ForEach(result.ingredients, id: \.name) { ing in
@@ -150,8 +124,7 @@ struct ImportPreviewView: View {
                     Button("Verwerfen") { onDone(false) }
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Übernehmen") { onDone(true) }
-                        .fontWeight(.semibold)
+                    Button("Übernehmen") { onDone(true) }.fontWeight(.semibold)
                 }
             }
         }

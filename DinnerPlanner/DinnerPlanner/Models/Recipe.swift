@@ -1,8 +1,6 @@
 import Foundation
-import SwiftData
 
-@Model
-final class Recipe {
+struct Recipe: Identifiable, Codable {
     var id: UUID
     var name: String
     var isFavorite: Bool
@@ -11,18 +9,18 @@ final class Recipe {
     var sourceURL: String?
     var createdAt: Date
     var modifiedAt: Date
-
-    @Relationship(deleteRule: .cascade)
     var ingredients: [Ingredient]
 
     init(
+        id: UUID = UUID(),
         name: String,
         defaultServings: Int = 4,
         isFavorite: Bool = false,
         tags: [String] = [],
-        sourceURL: String? = nil
+        sourceURL: String? = nil,
+        ingredients: [Ingredient] = []
     ) {
-        self.id = UUID()
+        self.id = id
         self.name = name
         self.defaultServings = defaultServings
         self.isFavorite = isFavorite
@@ -30,6 +28,6 @@ final class Recipe {
         self.sourceURL = sourceURL
         self.createdAt = Date()
         self.modifiedAt = Date()
-        self.ingredients = []
+        self.ingredients = ingredients
     }
 }

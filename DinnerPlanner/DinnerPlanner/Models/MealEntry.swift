@@ -1,24 +1,19 @@
 import Foundation
-import SwiftData
 
-/// Represents one planned meal on a specific weekday.
-@Model
-final class MealEntry {
+struct MealEntry: Identifiable, Codable {
     var id: UUID
-    /// Weekday as ISO weekday number (1 = Monday … 7 = Sunday, matching .iso8601)
-    var weekday: Int
-    /// ISO year+week identifier, e.g. "2024-W12", so each week is independent.
-    var weekID: String
+    var weekday: Int       // 1 = Monday … 7 = Sunday
+    var weekID: String     // e.g. "2024-W12"
     var servings: Int
-    var addedBy: String   // iCloud display name of the user who added this entry
+    var addedBy: String
+    var recipeID: UUID
 
-    var recipe: Recipe?
-
-    init(weekday: Int, weekID: String, recipe: Recipe, servings: Int, addedBy: String = "") {
-        self.id = UUID()
+    init(id: UUID = UUID(), weekday: Int, weekID: String, recipeID: UUID,
+         servings: Int, addedBy: String = "") {
+        self.id = id
         self.weekday = weekday
         self.weekID = weekID
-        self.recipe = recipe
+        self.recipeID = recipeID
         self.servings = servings
         self.addedBy = addedBy
     }

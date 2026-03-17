@@ -1,106 +1,79 @@
 import SwiftUI
-import SwiftData
 
 struct ShoppingListView: View {
-    @Environment(\.modelContext) private var modelContext
-    @Query private var items: [ShoppingItem]
-    @Query private var allEntries: [MealEntry]
-
+    @EnvironmentObject private var store: DataStore
     @State private var showingAddItem = false
-    @State private var newItemName = ""
-    @State private var newItemAmount = ""
-    @State private var newItemUnit = ""
     @State private var exportError: String?
     @State private var showingExportSuccess = false
     @State private var isExporting = false
 
-    private var currentWeekID: String { MealEntry.currentWeekID() }
-    private var entriesThisWeek: [MealEntry] { allEntries.filter { $0.weekID == currentWeekID } }
-
-    private var unchecked: [ShoppingItem] { items.filter { !$0.isChecked }.sorted { $0.sortOrder < $1.sortOrder } }
-    private var checked: [ShoppingItem]   { items.filter { $0.isChecked  }.sorted { $0.sortOrder < $1.sortOrder } }
+    private var weekID: String { MealEntry.currentWeekID() }
+    private var thisWeekEntries: [MealEntry] { store.mealEntries.filter { $0.weekID == weekID } }
+    private var unchecked: [ShoppingItem] { store.shoppingItems.filter { !$0.isChecked }.sorted { $0.sortOrder < $1.sortOrder } }
+    private var checked:   [ShoppingItem] { store.shoppingItems.filter {  $0.isChecked }.sorted { $0.sortOrder < $1.sortOrder } }
 
     var body: some View {
-        NavigationStack {
-            List {
-                if items.isEmpty {
-                    Section {
-                        ContentUnavailableView(
-                            "Keine Einträge",
-                            systemImage: "cart",
-                            description: Text("Generiere die Liste aus dem Wochenplan oder füge Einträge manuell hinzu.")
-                        )
-                    }
-                    .listRowBackground(Color.clear)
-                }
-
-                if !unchecked.isEmpty {
-                    Section("Noch kaufen (\(unchecked.count))") {
-                        ForEach(unchecked) { item in
-                            ShoppingItemRow(item: item)
-                                .swipeActions(edge: .trailing) {
-                                    Button(role: .destructive) { modelContext.delete(item) } label: {
-                                        Label("Löschen", systemImage: "trash")
-                                    }
+        NavigationView {
+            Group {
+                if store.shoppingItems.isEmpty {
+                    EmptyStateView(
+                        title: "Keine Einträge",
+                        systemImage: "cart",
+                        description: "Tippe auf ↺ um die Liste aus dem Wochenplan zu generieren."
+                    )
+                } else {
+                    List {
+                        if !unchecked.isEmpty {
+                            Section("Noch kaufen (\(unchecked.count))") {
+                                ForEach(unchecked) { item in
+                                    ShoppingItemRow(item: item)
+                                        .swipeActions(edge: .trailing) {
+                                            Button(role: .destructive) { store.deleteShoppingItem(item) } label: {
+                                                Label("Löschen", systemImage: "trash")
+                                            }
+                                        }
                                 }
+                            }
                         }
-                    }
-                }
-
-                if !checked.isEmpty {
-                    Section("Erledigt (\(checked.count))") {
-                        ForEach(checked) { item in
-                            ShoppingItemRow(item: item)
-                                .swipeActions(edge: .trailing) {
-                                    Button(role: .destructive) { modelContext.delete(item) } label: {
-                                        Label("Löschen", systemImage: "trash")
-                                    }
+                        if !checked.isEmpty {
+                            Section("Erledigt (\(checked.count))") {
+                                ForEach(checked) { item in
+                                    ShoppingItemRow(item: item)
+                                        .swipeActions(edge: .trailing) {
+                                            Button(role: .destructive) { store.deleteShoppingItem(item) } label: {
+                                                Label("Löschen", systemImage: "trash")
+                                            }
+                                        }
                                 }
-                        }
-                        Button(role: .destructive) {
-                            for item in checked { modelContext.delete(item) }
-                        } label: {
-                            Label("Alle erledigten löschen", systemImage: "trash")
-                                .foregroundStyle(.red)
+                                Button(role: .destructive) {
+                                    checked.forEach { store.deleteShoppingItem($0) }
+                                } label: {
+                                    Label("Alle erledigten löschen", systemImage: "trash")
+                                        .foregroundColor(.red)
+                                }
+                            }
                         }
                     }
                 }
             }
             .navigationTitle("Einkaufsliste")
             .toolbar {
-                ToolbarItemGroup(placement: .navigationBarTrailing) {
-                    // Regenerate from meal plan
-                    Button {
-                        regenerateFromPlan()
-                    } label: {
-                        Image(systemName: "arrow.clockwise")
-                    }
-                    .help("Aus Wochenplan neu generieren")
-
-                    // Export to Reminders
-                    if isExporting {
-                        ProgressView()
-                    } else {
-                        Button {
-                            exportToReminders()
-                        } label: {
-                            Image(systemName: "checkmark.circle")
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    HStack(spacing: 16) {
+                        Button { regenerate() } label: {
+                            Image(systemName: "arrow.clockwise")
                         }
-                        .help("In Erinnerungen exportieren")
-                    }
-
-                    // Share as text
-                    Button {
-                        shareList()
-                    } label: {
-                        Image(systemName: "square.and.arrow.up")
-                    }
-
-                    // Add manual item
-                    Button {
-                        showingAddItem = true
-                    } label: {
-                        Image(systemName: "plus")
+                        if isExporting { ProgressView() } else {
+                            Button { exportToReminders() } label: {
+                                Image(systemName: "checkmark.circle")
+                            }
+                        }
+                        Button { shareList() } label: {
+                            Image(systemName: "square.and.arrow.up")
+                        }
+                        Button { showingAddItem = true } label: {
+                            Image(systemName: "plus")
+                        }
                     }
                 }
             }
@@ -109,37 +82,25 @@ struct ShoppingListView: View {
                 set: { if !$0 { exportError = nil } }
             )) {
                 Button("OK", role: .cancel) {}
-            } message: {
-                Text(exportError ?? "")
-            }
+            } message: { Text(exportError ?? "") }
             .alert("Exportiert!", isPresented: $showingExportSuccess) {
                 Button("OK", role: .cancel) {}
-            } message: {
-                Text("Die Einkaufsliste wurde in die Erinnerungen-App übertragen.")
-            }
+            } message: { Text("Die Liste wurde in die Erinnerungen-App übertragen.") }
         }
+        .navigationViewStyle(.stack)
         .sheet(isPresented: $showingAddItem) {
             AddManualItemView { name, amount, unit in
-                let item = ShoppingItem(
+                store.addShoppingItem(ShoppingItem(
                     name: name, amount: amount, unit: unit,
-                    isManual: true, sortOrder: items.count
-                )
-                modelContext.insert(item)
+                    isManual: true, sortOrder: store.shoppingItems.count
+                ))
             }
         }
     }
 
-    private func regenerateFromPlan() {
-        // Remove all auto-generated items, keep manual ones
-        let autoItems = items.filter { !$0.isManual }
-        for item in autoItems { modelContext.delete(item) }
-
-        let generated = ShoppingListGenerator.generate(from: entriesThisWeek)
-        let baseOrder = items.filter { $0.isManual }.count
-        for (idx, item) in generated.enumerated() {
-            item.sortOrder = baseOrder + idx
-            modelContext.insert(item)
-        }
+    private func regenerate() {
+        let generated = ShoppingListGenerator.generate(from: thisWeekEntries, recipes: store.recipes)
+        store.replaceAutoItems(with: generated)
     }
 
     private func exportToReminders() {
@@ -167,28 +128,29 @@ struct ShoppingListView: View {
 }
 
 struct ShoppingItemRow: View {
-    @Bindable var item: ShoppingItem
+    @EnvironmentObject private var store: DataStore
+    let item: ShoppingItem
 
     var body: some View {
         HStack {
             Button {
-                item.isChecked.toggle()
+                var updated = item
+                updated.isChecked.toggle()
+                store.updateShoppingItem(updated)
             } label: {
                 Image(systemName: item.isChecked ? "checkmark.circle.fill" : "circle")
-                    .foregroundStyle(item.isChecked ? .green : .secondary)
+                    .foregroundColor(item.isChecked ? .green : .secondary)
                     .font(.title3)
             }
             .buttonStyle(.plain)
 
             Text(item.displayText)
                 .strikethrough(item.isChecked, color: .secondary)
-                .foregroundStyle(item.isChecked ? .secondary : .primary)
+                .foregroundColor(item.isChecked ? .secondary : .primary)
 
             if item.isManual {
                 Spacer()
-                Image(systemName: "pencil")
-                    .font(.caption2)
-                    .foregroundStyle(.tertiary)
+                Image(systemName: "pencil").font(.caption2).foregroundColor(.secondary)
             }
         }
     }
@@ -203,13 +165,12 @@ struct AddManualItemView: View {
     @State private var unit = ""
 
     var body: some View {
-        NavigationStack {
+        NavigationView {
             Form {
                 Section {
                     TextField("Zutat (z.B. Milch)", text: $name)
                     HStack {
-                        TextField("Menge (z.B. 500)", text: $amount)
-                            .keyboardType(.decimalPad)
+                        TextField("Menge (z.B. 500)", text: $amount).keyboardType(.decimalPad)
                         TextField("Einheit (z.B. ml)", text: $unit)
                     }
                 }
@@ -223,8 +184,7 @@ struct AddManualItemView: View {
                         onAdd(name, a, unit)
                         dismiss()
                     }
-                    .disabled(name.isEmpty)
-                    .fontWeight(.semibold)
+                    .disabled(name.isEmpty).fontWeight(.semibold)
                 }
             }
         }

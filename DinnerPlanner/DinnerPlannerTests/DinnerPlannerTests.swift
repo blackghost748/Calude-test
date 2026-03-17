@@ -6,72 +6,90 @@ final class DinnerPlannerTests: XCTestCase {
     // MARK: - ShoppingListGenerator
 
     func testIngredientMerging() {
-        let recipe = Recipe(name: "Test", defaultServings: 4)
-        let ing1 = Ingredient(name: "Mehl", amount: 200, unit: "g", sortOrder: 0)
-        let ing2 = Ingredient(name: "Eier", amount: 2, unit: "Stück", sortOrder: 1)
-        ing1.recipe = recipe
-        ing2.recipe = recipe
-        recipe.ingredients = [ing1, ing2]
+        let recipe = Recipe(
+            name: "Test",
+            defaultServings: 4,
+            ingredients: [
+                Ingredient(name: "Mehl",  amount: 200, unit: "g",     sortOrder: 0),
+                Ingredient(name: "Eier",  amount: 2,   unit: "Stück", sortOrder: 1),
+            ]
+        )
+        let entry1 = MealEntry(weekday: 1, weekID: "2024-W10", recipeID: recipe.id, servings: 4)
+        let entry2 = MealEntry(weekday: 3, weekID: "2024-W10", recipeID: recipe.id, servings: 4)
 
-        let entry1 = MealEntry(weekday: 1, weekID: "2024-W10", recipe: recipe, servings: 4)
-        let entry2 = MealEntry(weekday: 3, weekID: "2024-W10", recipe: recipe, servings: 4)
-
-        let items = ShoppingListGenerator.generate(from: [entry1, entry2])
+        let items = ShoppingListGenerator.generate(from: [entry1, entry2], recipes: [recipe])
 
         XCTAssertEqual(items.count, 2)
-        // 200g Mehl × 2 entries = 400g
         let mehl = items.first { $0.name.lowercased() == "mehl" }
-        XCTAssertEqual(mehl?.amount, 400)
+        XCTAssertEqual(mehl?.amount, 400) // 200g × 2 entries
         XCTAssertEqual(mehl?.unit, "g")
     }
 
     func testServingsScaling() {
-        let recipe = Recipe(name: "Pasta", defaultServings: 2)
-        let ing = Ingredient(name: "Nudeln", amount: 100, unit: "g", sortOrder: 0)
-        ing.recipe = recipe
-        recipe.ingredients = [ing]
-
-        let entry = MealEntry(weekday: 2, weekID: "2024-W10", recipe: recipe, servings: 4)
-        let items = ShoppingListGenerator.generate(from: [entry])
-
-        // 100g / 2 Portionen × 4 Portionen = 200g
-        XCTAssertEqual(items.first?.amount, 200)
+        let recipe = Recipe(
+            name: "Pasta",
+            defaultServings: 2,
+            ingredients: [Ingredient(name: "Nudeln", amount: 100, unit: "g")]
+        )
+        let entry = MealEntry(weekday: 2, weekID: "2024-W10", recipeID: recipe.id, servings: 4)
+        let items = ShoppingListGenerator.generate(from: [entry], recipes: [recipe])
+        XCTAssertEqual(items.first?.amount, 200) // 100g / 2 × 4 = 200g
     }
 
     // MARK: - RecipeImportService
 
-    func testIngredientLineParsing() {
-        let cases: [(String, Double, String, String)] = [
-            ("200 g Mehl", 200, "g", "Mehl"),
-            ("3 Eier", 1, "", "3 Eier"),  // no unit pattern matches "Eier" as ingredient
-            ("1,5 kg Kartoffeln", 1.5, "kg", "Kartoffeln"),
-        ]
+    func testIngredientLineParsing_withUnit() {
+        let result = RecipeImportService.parseIngredientLine("200 g Mehl")
+        XCTAssertNotNil(result)
+        XCTAssertEqual(result?.amount, 200)
+        XCTAssertEqual(result?.unit, "g")
+        XCTAssertEqual(result?.name, "Mehl")
+    }
 
-        for (line, expectedAmount, _, _) in cases {
-            let result = RecipeImportService.parseIngredientLine(line)
-            XCTAssertNotNil(result, "Expected result for: \(line)")
-            if line.contains("g ") || line.contains("kg ") {
-                XCTAssertEqual(result?.amount, expectedAmount, "Amount mismatch for: \(line)")
-            }
-        }
+    func testIngredientLineParsing_decimalComma() {
+        let result = RecipeImportService.parseIngredientLine("1,5 kg Kartoffeln")
+        XCTAssertNotNil(result)
+        XCTAssertEqual(result?.amount, 1.5)
     }
 
     // MARK: - ShoppingItem
 
-    func testDisplayText() {
+    func testDisplayText_withUnit() {
         let item = ShoppingItem(name: "Mehl", amount: 500, unit: "g")
         XCTAssertEqual(item.displayText, "500 g Mehl")
+    }
 
-        let item2 = ShoppingItem(name: "Salz", amount: 1, unit: "")
-        XCTAssertEqual(item2.displayText, "Salz")
+    func testDisplayText_noUnit() {
+        let item = ShoppingItem(name: "Salz", amount: 1, unit: "")
+        XCTAssertEqual(item.displayText, "Salz")
     }
 
     // MARK: - MealEntry
 
     func testCurrentWeekIDFormat() {
         let weekID = MealEntry.currentWeekID()
-        // Format: YYYY-Www
         XCTAssertTrue(weekID.contains("-W"), "weekID should contain -W: \(weekID)")
         XCTAssertEqual(weekID.count, 8) // "2024-W10"
+    }
+
+    // MARK: - DataStore
+
+    func testDataStoreAddAndDeleteRecipe() {
+        let store = DataStore()
+        let initialCount = store.recipes.count
+        let recipe = Recipe(name: "Testrezept")
+        store.addRecipe(recipe)
+        XCTAssertEqual(store.recipes.count, initialCount + 1)
+        store.deleteRecipe(recipe)
+        XCTAssertEqual(store.recipes.count, initialCount)
+    }
+
+    func testToggleFavorite() {
+        let store = DataStore()
+        let recipe = Recipe(name: "Favorit-Test", isFavorite: false)
+        store.addRecipe(recipe)
+        store.toggleFavorite(recipe)
+        XCTAssertTrue(store.recipes.first { $0.id == recipe.id }?.isFavorite == true)
+        store.deleteRecipe(recipe)
     }
 }

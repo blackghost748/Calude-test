@@ -1,26 +1,20 @@
 import Foundation
 import EventKit
 
-/// Exports shopping items to the iOS Reminders app.
 struct RemindersService {
 
     static func exportToReminders(items: [ShoppingItem], listName: String = "Einkaufsliste") async throws {
         let store = EKEventStore()
 
-        // Request access
-        if #available(iOS 17.0, *) {
-            try await store.requestFullAccessToReminders()
-        } else {
-            try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
-                store.requestAccess(to: .reminder) { granted, error in
-                    if let error { continuation.resume(throwing: error); return }
-                    if !granted { continuation.resume(throwing: RemindersError.accessDenied); return }
-                    continuation.resume()
-                }
+        // Use completion-based API – compatible with iOS 16
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+            store.requestAccess(to: .reminder) { granted, error in
+                if let error { continuation.resume(throwing: error); return }
+                guard granted else { continuation.resume(throwing: RemindersError.accessDenied); return }
+                continuation.resume()
             }
         }
 
-        // Find or create the list (EKCalendar)
         let calendars = store.calendars(for: .reminder)
         let calendar: EKCalendar
         if let existing = calendars.first(where: { $0.title == listName }) {
@@ -33,7 +27,6 @@ struct RemindersService {
             calendar = newList
         }
 
-        // Add unchecked items as reminders
         for item in items where !item.isChecked {
             let reminder = EKReminder(eventStore: store)
             reminder.title = item.displayText
@@ -46,8 +39,7 @@ struct RemindersService {
 
 enum RemindersError: LocalizedError {
     case accessDenied
-
     var errorDescription: String? {
-        "Zugriff auf Erinnerungen wurde verweigert. Bitte in den Einstellungen erlauben."
+        "Zugriff auf Erinnerungen verweigert. Bitte in den Einstellungen erlauben."
     }
 }

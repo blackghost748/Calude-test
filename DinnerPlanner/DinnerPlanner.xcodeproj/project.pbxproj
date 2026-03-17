@@ -26,6 +26,8 @@
 		AA000018 /* ShoppingListGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000018 /* ShoppingListGenerator.swift */; };
 		AA000019 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BB000019 /* Assets.xcassets */; };
 		AA000020 /* DinnerPlannerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000020 /* DinnerPlannerTests.swift */; };
+		AA000021 /* DataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000021 /* DataStore.swift */; };
+		AA000022 /* EmptyStateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000022 /* EmptyStateView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -48,6 +50,8 @@
 		BB000018 /* ShoppingListGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingListGenerator.swift; sourceTree = "<group>"; };
 		BB000019 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		BB000020 /* DinnerPlannerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DinnerPlannerTests.swift; sourceTree = "<group>"; };
+		BB000021 /* DataStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataStore.swift; sourceTree = "<group>"; };
+		BB000022 /* EmptyStateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyStateView.swift; sourceTree = "<group>"; };
 		CC000001 /* DinnerPlanner.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DinnerPlanner.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CC000002 /* DinnerPlannerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DinnerPlannerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		CC000003 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -87,6 +91,7 @@
 				BB000005 /* MealEntry.swift */,
 				BB000006 /* ShoppingItem.swift */,
 				BB000007 /* FamilyGroup.swift */,
+				BB000021 /* DataStore.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -101,6 +106,7 @@
 				BB000012 /* WeekPlanView.swift */,
 				BB000013 /* ShoppingListView.swift */,
 				BB000014 /* SettingsView.swift */,
+				BB000022 /* EmptyStateView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -174,8 +180,8 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 1500;
-				LastUpgradeCheck = 1500;
+				LastSwiftUpdateCheck = 1420;
+				LastUpgradeCheck = 1420;
 				TargetAttributes = {
 					FF000001 = {
 						CreatedOnToolsVersion = 15.0;
@@ -239,6 +245,8 @@
 				AA000015 /* RecipeImportService.swift in Sources */,
 				AA000017 /* RemindersService.swift in Sources */,
 				AA000018 /* ShoppingListGenerator.swift in Sources */,
+				AA000021 /* DataStore.swift in Sources */,
+				AA000022 /* EmptyStateView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -311,7 +319,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -366,7 +374,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
@@ -387,7 +395,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = DinnerPlanner/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -396,7 +404,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.dinnerplanner.app";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.9;
+				SWIFT_VERSION = 5.7;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
@@ -413,7 +421,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = DinnerPlanner/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -422,7 +430,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.dinnerplanner.app";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.9;
+				SWIFT_VERSION = 5.7;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
@@ -435,12 +443,12 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.dinnerplanner.app.tests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.9;
+				SWIFT_VERSION = 5.7;
 				TARGETED_DEVICE_FAMILY = 1;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/DinnerPlanner.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/DinnerPlanner";
 			};
@@ -454,12 +462,12 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.dinnerplanner.app.tests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.9;
+				SWIFT_VERSION = 5.7;
 				TARGETED_DEVICE_FAMILY = 1;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/DinnerPlanner.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/DinnerPlanner";
 			};

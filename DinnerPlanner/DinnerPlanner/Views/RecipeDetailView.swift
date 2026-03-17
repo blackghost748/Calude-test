@@ -1,12 +1,16 @@
 import SwiftUI
-import SwiftData
 
 struct RecipeDetailView: View {
-    @Environment(\.modelContext) private var modelContext
-    @Bindable var recipe: Recipe
+    @EnvironmentObject private var store: DataStore
+    let recipe: Recipe
 
-    @State private var showingEdit = false
     @State private var servings: Int
+    @State private var showingEdit = false
+
+    // Use fresh copy from store so edits are reflected
+    private var current: Recipe {
+        store.recipes.first { $0.id == recipe.id } ?? recipe
+    }
 
     init(recipe: Recipe) {
         self.recipe = recipe
@@ -19,74 +23,62 @@ struct RecipeDetailView: View {
                 Stepper("Portionen: \(servings)", value: $servings, in: 1...20)
                     .font(.subheadline)
 
-                ForEach(recipe.ingredients.sorted(by: { $0.sortOrder < $1.sortOrder })) { ingredient in
+                ForEach(current.ingredients.sorted { $0.sortOrder < $1.sortOrder }) { ingredient in
                     HStack {
                         Text(ingredient.name)
                         Spacer()
                         let scaled = ingredient.scaledAmount(
                             targetServings: servings,
-                            defaultServings: recipe.defaultServings
+                            defaultServings: current.defaultServings
                         )
-                        let formatted = scaled.truncatingRemainder(dividingBy: 1) == 0
-                            ? String(Int(scaled))
-                            : String(format: "%.1f", scaled)
-                        Text("\(formatted) \(ingredient.unit)")
-                            .foregroundStyle(.secondary)
+                        let fmt = scaled.truncatingRemainder(dividingBy: 1) == 0
+                            ? String(Int(scaled)) : String(format: "%.1f", scaled)
+                        Text("\(fmt) \(ingredient.unit)").foregroundColor(.secondary)
                     }
                 }
             }
 
-            if let url = recipe.sourceURL, !url.isEmpty {
+            if let url = current.sourceURL, !url.isEmpty,
+               let link = URL(string: url) {
                 Section {
-                    Link("Originalrezept öffnen", destination: URL(string: url) ?? URL(string: "https://example.com")!)
-                        .font(.subheadline)
+                    Link("Originalrezept öffnen", destination: link).font(.subheadline)
                 }
             }
 
-            if !recipe.tags.isEmpty {
+            if !current.tags.isEmpty {
                 Section("Tags") {
-                    TagCloudView(tags: recipe.tags)
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack {
+                            ForEach(current.tags, id: \.self) { tag in
+                                Text(tag)
+                                    .font(.caption)
+                                    .padding(.horizontal, 10).padding(.vertical, 4)
+                                    .background(Color.blue.opacity(0.15))
+                                    .foregroundColor(.blue)
+                                    .clipShape(Capsule())
+                            }
+                        }
+                    }
                 }
             }
         }
-        .navigationTitle(recipe.name)
+        .navigationTitle(current.name)
         .navigationBarTitleDisplayMode(.large)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 HStack {
                     Button {
-                        recipe.isFavorite.toggle()
+                        store.toggleFavorite(current)
                     } label: {
-                        Image(systemName: recipe.isFavorite ? "star.fill" : "star")
-                            .foregroundStyle(recipe.isFavorite ? .yellow : .secondary)
+                        Image(systemName: current.isFavorite ? "star.fill" : "star")
+                            .foregroundColor(current.isFavorite ? .yellow : .secondary)
                     }
-                    Button("Bearbeiten") {
-                        showingEdit = true
-                    }
+                    Button("Bearbeiten") { showingEdit = true }
                 }
             }
         }
         .sheet(isPresented: $showingEdit) {
-            AddEditRecipeView(recipe: recipe)
-        }
-    }
-}
-
-struct TagCloudView: View {
-    let tags: [String]
-
-    var body: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack {
-                ForEach(tags, id: \.self) { tag in
-                    Text(tag)
-                        .font(.caption)
-                        .padding(.horizontal, 10)
-                        .padding(.vertical, 4)
-                        .background(.blue.opacity(0.15), in: Capsule())
-                        .foregroundStyle(.blue)
-                }
-            }
+            AddEditRecipeView(recipe: current)
         }
     }
 }
