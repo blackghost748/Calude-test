@@ -38,22 +38,7 @@ struct ShoppingListView: View {
             .navigationTitle("Einkaufsliste")
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    HStack(spacing: 16) {
-                        Button { regenerate() } label: {
-                            Image(systemName: "arrow.clockwise")
-                        }
-                        if isExporting { ProgressView() } else {
-                            Button { exportToReminders() } label: {
-                                Image(systemName: "checkmark.circle")
-                            }
-                        }
-                        Button { shareList() } label: {
-                            Image(systemName: "square.and.arrow.up")
-                        }
-                        Button { showingAddItem = true } label: {
-                            Image(systemName: "plus")
-                        }
-                    }
+                    toolbarButtons
                 }
             }
             .alert("Export fehlgeschlagen", isPresented: Binding(
@@ -76,6 +61,19 @@ struct ShoppingListView: View {
                     category: category
                 ))
             }
+        }
+    }
+
+    @ViewBuilder private var toolbarButtons: some View {
+        HStack(spacing: 16) {
+            Button { regenerate() } label: { Image(systemName: "arrow.clockwise") }
+            if isExporting {
+                ProgressView()
+            } else {
+                Button { exportToReminders() } label: { Image(systemName: "checkmark.circle") }
+            }
+            Button { shareList() } label: { Image(systemName: "square.and.arrow.up") }
+            Button { showingAddItem = true } label: { Image(systemName: "plus") }
         }
     }
 
