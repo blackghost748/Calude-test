@@ -32,45 +32,7 @@ struct ShoppingListView: View {
                         description: "Tippe auf ↺ um die Liste aus dem Wochenplan zu generieren."
                     )
                 } else {
-                    List {
-                        // --- Unchecked items, grouped by category ---
-                        ForEach(groupedUnchecked, id: \.category) { group in
-                            Section(group.category) {
-                                ForEach(group.items) { item in
-                                    ShoppingItemRow(item: item)
-                                        .swipeActions(edge: .trailing) {
-                                            Button(role: .destructive) {
-                                                store.deleteShoppingItem(item)
-                                            } label: {
-                                                Label("Löschen", systemImage: "trash")
-                                            }
-                                        }
-                                }
-                            }
-                        }
-
-                        // --- Checked items collapsed into one section ---
-                        if !checked.isEmpty {
-                            Section("Erledigt (\(checked.count))") {
-                                ForEach(checked.sorted { $0.name < $1.name }) { item in
-                                    ShoppingItemRow(item: item)
-                                        .swipeActions(edge: .trailing) {
-                                            Button(role: .destructive) {
-                                                store.deleteShoppingItem(item)
-                                            } label: {
-                                                Label("Löschen", systemImage: "trash")
-                                            }
-                                        }
-                                }
-                                Button(role: .destructive) {
-                                    checked.forEach { store.deleteShoppingItem($0) }
-                                } label: {
-                                    Label("Alle erledigten löschen", systemImage: "trash")
-                                        .foregroundColor(.red)
-                                }
-                            }
-                        }
-                    }
+                    shoppingList
                 }
             }
             .navigationTitle("Einkaufsliste")
@@ -113,6 +75,49 @@ struct ShoppingListView: View {
                     isManual: true, sortOrder: store.shoppingItems.count,
                     category: category
                 ))
+            }
+        }
+    }
+
+    private var shoppingList: some View {
+        List {
+            ForEach(groupedUnchecked, id: \.category) { group in
+                Section(group.category) {
+                    ForEach(group.items) { item in
+                        ShoppingItemRow(item: item)
+                            .swipeActions(edge: .trailing) {
+                                Button(role: .destructive) {
+                                    store.deleteShoppingItem(item)
+                                } label: {
+                                    Label("Löschen", systemImage: "trash")
+                                }
+                            }
+                    }
+                }
+            }
+            if !checked.isEmpty {
+                checkedSection
+            }
+        }
+    }
+
+    private var checkedSection: some View {
+        Section("Erledigt (\(checked.count))") {
+            ForEach(checked.sorted { $0.name < $1.name }) { item in
+                ShoppingItemRow(item: item)
+                    .swipeActions(edge: .trailing) {
+                        Button(role: .destructive) {
+                            store.deleteShoppingItem(item)
+                        } label: {
+                            Label("Löschen", systemImage: "trash")
+                        }
+                    }
+            }
+            Button(role: .destructive) {
+                checked.forEach { store.deleteShoppingItem($0) }
+            } label: {
+                Label("Alle erledigten löschen", systemImage: "trash")
+                    .foregroundColor(.red)
             }
         }
     }
@@ -177,7 +182,7 @@ struct ShoppingItemRow: View {
 
             if item.isManual {
                 Spacer()
-                Image(systemName: "pencil").font(.caption2).foregroundColor(.tertiary)
+                Image(systemName: "pencil").font(.caption2).foregroundColor(Color.secondary.opacity(0.5))
             }
         }
     }
