@@ -77,7 +77,6 @@ struct RecipeImportView: View {
     private func runImport() {
         errorMessage = nil; isLoading = true
         Task { @MainActor in
-            defer { isLoading = false }
             do {
                 importResult = selectedTab == .url
                     ? try await RecipeImportService.importFromURL(urlText)
@@ -85,6 +84,7 @@ struct RecipeImportView: View {
             } catch {
                 errorMessage = error.localizedDescription
             }
+            isLoading = false
         }
     }
 

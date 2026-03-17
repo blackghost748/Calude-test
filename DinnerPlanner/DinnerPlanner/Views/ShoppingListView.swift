@@ -106,13 +106,13 @@ struct ShoppingListView: View {
     private func exportToReminders() {
         isExporting = true
         Task { @MainActor in
-            defer { isExporting = false }
             do {
                 try await RemindersService.exportToReminders(items: unchecked)
                 showingExportSuccess = true
             } catch {
                 exportError = error.localizedDescription
             }
+            isExporting = false
         }
     }
 
