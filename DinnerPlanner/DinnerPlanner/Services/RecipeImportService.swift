@@ -54,7 +54,10 @@ struct RecipeImportService {
         guard type.lowercased().contains("recipe") else { return nil }
 
         let name = json["name"] as? String ?? "Importiertes Rezept"
-        let yieldRaw = json["recipeYield"] as? String ?? json["recipeYield"] as? Int as? String ?? ""
+        let yieldRaw: String
+        if let s = json["recipeYield"] as? String { yieldRaw = s }
+        else if let n = json["recipeYield"] as? Int { yieldRaw = String(n) }
+        else { yieldRaw = "" }
         let servings = Int(yieldRaw.components(separatedBy: CharacterSet.decimalDigits.inverted).joined()) ?? 4
 
         var ingredients: [RawIngredient] = []
