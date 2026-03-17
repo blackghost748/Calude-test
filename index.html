@@ -1,0 +1,1719 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Plait — Plan meals, build your grocery list, and shop smarter. Available on iPhone and iPad." />
+  <meta property="og:title" content="Plait — Meal Planning for Families" />
+  <meta property="og:description" content="Plan together. Eat better. Download Plait on the App Store." />
+  <meta name="theme-color" content="#4A7C59" />
+  <title>Plait — Plan together. Eat better.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    /* ============================================================
+       1. CUSTOM PROPERTIES
+    ============================================================ */
+    :root {
+      --color-bg-primary:    #FAFAF8;
+      --color-bg-secondary:  #F2F0EB;
+      --color-bg-dark:       #1A1A18;
+      --color-bg-dark2:      #141412;
+      --color-bg-card:       #FFFFFF;
+      --color-accent:        #4A7C59;
+      --color-accent-light:  #6B9E7A;
+      --color-accent-pale:   #EBF2ED;
+      --color-accent-dark:   #365C42;
+      --color-text-primary:  #1A1A18;
+      --color-text-secondary:#6B6B67;
+      --color-text-muted:    #9B9B96;
+      --color-text-inverse:  #F5F5F2;
+      --color-text-muted-inv:#8A8A85;
+      --color-border:        #E8E6E0;
+      --color-border-dark:   #2E2E2B;
+      --radius-sm:  10px;
+      --radius-md:  16px;
+      --radius-lg:  24px;
+      --radius-xl:  32px;
+      --shadow-sm:  0 1px 4px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.06);
+      --shadow-md:  0 4px 24px rgba(0,0,0,.10), 0 1px 4px rgba(0,0,0,.05);
+      --shadow-lg:  0 12px 48px rgba(0,0,0,.14), 0 2px 8px rgba(0,0,0,.06);
+      --container:  1160px;
+      --section-v:  clamp(72px, 10vw, 128px);
+    }
+
+    /* ============================================================
+       2. RESET
+    ============================================================ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--color-bg-primary);
+      color: var(--color-text-primary);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+    img, svg { display: block; max-width: 100%; }
+    a { color: inherit; text-decoration: none; }
+    ul { list-style: none; }
+    button { cursor: pointer; border: none; background: none; font: inherit; }
+
+    /* ============================================================
+       3. TYPOGRAPHY
+    ============================================================ */
+    .t-label {
+      font-size: .75rem;
+      font-weight: 600;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--color-accent);
+    }
+    .t-label--inv { color: var(--color-accent-light); }
+
+    .t-hero {
+      font-size: clamp(2.6rem, 6vw, 4.5rem);
+      font-weight: 800;
+      line-height: 1.05;
+      letter-spacing: -.03em;
+    }
+    .t-section {
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: -.025em;
+    }
+    .t-feature {
+      font-size: clamp(1.6rem, 3vw, 2.25rem);
+      font-weight: 700;
+      line-height: 1.15;
+      letter-spacing: -.02em;
+    }
+    .t-body-lg {
+      font-size: clamp(1rem, 1.5vw, 1.125rem);
+      line-height: 1.7;
+      color: var(--color-text-secondary);
+    }
+    .t-body-lg--inv { color: var(--color-text-muted-inv); }
+    .t-caption {
+      font-size: .8rem;
+      color: var(--color-text-muted);
+    }
+
+    /* ============================================================
+       4. LAYOUT
+    ============================================================ */
+    .container {
+      width: 100%;
+      max-width: var(--container);
+      margin-inline: auto;
+      padding-inline: clamp(20px, 5vw, 48px);
+    }
+    .section { padding-block: var(--section-v); }
+    .section--secondary { background: var(--color-bg-secondary); }
+    .section--dark {
+      background: var(--color-bg-dark);
+      color: var(--color-text-inverse);
+    }
+    .section--dark2 { background: var(--color-bg-dark2); }
+    .section--pale { background: var(--color-accent-pale); }
+
+    /* ============================================================
+       5. UTILITIES
+    ============================================================ */
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 12px;
+      border-radius: 100px;
+      font-size: .8rem;
+      font-weight: 500;
+      background: var(--color-accent-pale);
+      color: var(--color-accent-dark);
+      border: 1px solid rgba(74,124,89,.15);
+    }
+    .chip--dark {
+      background: rgba(74,124,89,.2);
+      color: #9fcfab;
+      border-color: rgba(74,124,89,.3);
+    }
+    .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+
+    .bullet-list { display: flex; flex-direction: column; gap: 12px; }
+    .bullet-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: .95rem;
+      color: var(--color-text-secondary);
+    }
+    .bullet-list li::before {
+      content: '';
+      flex-shrink: 0;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--color-accent);
+      margin-top: 8px;
+    }
+    .bullet-list--inv li { color: var(--color-text-muted-inv); }
+    .bullet-list--inv li::before { background: var(--color-accent-light); }
+
+    /* ============================================================
+       6. BUTTONS
+    ============================================================ */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 28px;
+      border-radius: 100px;
+      font-size: .95rem;
+      font-weight: 600;
+      transition: transform .15s ease, box-shadow .15s ease, background .15s ease;
+    }
+    .btn:hover { transform: translateY(-1px); }
+    .btn:active { transform: translateY(0); }
+    .btn--primary {
+      background: var(--color-accent);
+      color: #fff;
+      box-shadow: 0 2px 12px rgba(74,124,89,.35);
+    }
+    .btn--primary:hover {
+      background: var(--color-accent-light);
+      box-shadow: 0 4px 20px rgba(74,124,89,.45);
+    }
+    .btn--ghost {
+      color: var(--color-accent);
+      border: 1.5px solid rgba(74,124,89,.4);
+    }
+    .btn--ghost:hover { background: var(--color-accent-pale); }
+    .btn--ghost--inv {
+      color: #fff;
+      border: 1.5px solid rgba(255,255,255,.25);
+    }
+    .btn--ghost--inv:hover { background: rgba(255,255,255,.08); }
+    .btn-group { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+
+    /* ============================================================
+       7. NAVIGATION
+    ============================================================ */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      padding: 18px 0;
+      transition: padding .3s ease, background .3s ease, border-color .3s ease, backdrop-filter .3s ease;
+      border-bottom: 1px solid transparent;
+    }
+    nav.scrolled {
+      padding: 12px 0;
+      background: rgba(250,250,248,.88);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom-color: var(--color-border);
+    }
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav-logo {
+      font-size: 1.35rem;
+      font-weight: 800;
+      letter-spacing: -.03em;
+      color: var(--color-text-primary);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .nav-logo-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--color-accent);
+      flex-shrink: 0;
+    }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+    }
+    .nav-links a {
+      font-size: .9rem;
+      font-weight: 500;
+      color: var(--color-text-secondary);
+      transition: color .15s;
+    }
+    .nav-links a:hover { color: var(--color-text-primary); }
+
+    /* ============================================================
+       8. HERO
+    ============================================================ */
+    #hero {
+      padding-top: calc(var(--section-v) + 72px);
+      padding-bottom: var(--section-v);
+      background: var(--color-bg-primary);
+      overflow: hidden;
+    }
+    .hero-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 64px;
+      align-items: center;
+    }
+    .hero-text { max-width: 540px; }
+    .hero-label { margin-bottom: 20px; }
+    .hero-headline { margin-bottom: 20px; }
+    .hero-sub {
+      font-size: clamp(1rem, 1.5vw, 1.15rem);
+      line-height: 1.7;
+      color: var(--color-text-secondary);
+      margin-bottom: 36px;
+    }
+
+    /* Hero Illustration */
+    .hero-visual {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .week-card {
+      background: #fff;
+      border-radius: var(--radius-xl);
+      border: 1px solid var(--color-border);
+      box-shadow: var(--shadow-lg);
+      padding: 20px;
+      width: 100%;
+      max-width: 480px;
+      transform: rotate(1.5deg);
+    }
+    .week-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+    .week-card-title {
+      font-size: .9rem;
+      font-weight: 700;
+      color: var(--color-text-primary);
+    }
+    .week-card-sub {
+      font-size: .75rem;
+      color: var(--color-text-muted);
+    }
+    .week-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 6px;
+    }
+    .wg-day {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    .wg-day-label {
+      text-align: center;
+      font-size: .6rem;
+      font-weight: 600;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      color: var(--color-text-muted);
+      padding-bottom: 4px;
+    }
+    .wg-meal {
+      border-radius: 8px;
+      padding: 5px 4px;
+      font-size: .62rem;
+      font-weight: 500;
+      line-height: 1.3;
+      min-height: 40px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      gap: 2px;
+    }
+    .wg-meal--filled {
+      background: var(--color-accent-pale);
+      color: var(--color-accent-dark);
+      border: 1px solid rgba(74,124,89,.12);
+    }
+    .wg-meal--filled2 {
+      background: #FFF3E6;
+      color: #A05A00;
+      border: 1px solid rgba(160,90,0,.12);
+    }
+    .wg-meal--filled3 {
+      background: #EEF2FF;
+      color: #3730A3;
+      border: 1px solid rgba(55,48,163,.1);
+    }
+    .wg-meal--empty {
+      background: var(--color-bg-secondary);
+      border: 1px dashed var(--color-border);
+      color: var(--color-text-muted);
+      font-size: .55rem;
+    }
+    .wg-meal-emoji { font-size: .9rem; line-height: 1; }
+
+    /* Floating shopping card */
+    .floating-card {
+      position: absolute;
+      bottom: -24px;
+      right: -20px;
+      background: rgba(255,255,255,.95);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-md);
+      padding: 14px 18px;
+      min-width: 180px;
+      transform: rotate(-1.5deg);
+    }
+    .fc-title {
+      font-size: .72rem;
+      font-weight: 700;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+      color: var(--color-text-muted);
+      margin-bottom: 10px;
+    }
+    .fc-items { display: flex; flex-direction: column; gap: 7px; }
+    .fc-item {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: .78rem;
+      font-weight: 500;
+      color: var(--color-text-primary);
+    }
+    .fc-item-dot {
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: var(--color-accent);
+      flex-shrink: 0;
+    }
+
+    /* ============================================================
+       9. FEATURE SECTIONS
+    ============================================================ */
+    .feature-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(40px, 8vw, 96px);
+      align-items: center;
+    }
+    .feature-layout--flip .feat-visual { order: -1; }
+
+    .feat-text { display: flex; flex-direction: column; gap: 20px; }
+    .feat-title { color: inherit; }
+    .feat-body { max-width: 440px; }
+
+    /* Recipe Illustration */
+    .recipe-card-demo {
+      background: var(--color-bg-card);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--color-border);
+      box-shadow: var(--shadow-md);
+      padding: 24px;
+      max-width: 360px;
+      margin: 0 auto;
+    }
+    .rcd-import-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--color-bg-secondary);
+      border-radius: var(--radius-sm);
+      padding: 10px 14px;
+      margin-bottom: 20px;
+    }
+    .rcd-url-icon {
+      font-size: 1rem;
+    }
+    .rcd-url-text {
+      font-size: .75rem;
+      color: var(--color-text-muted);
+      flex: 1;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+    .rcd-import-btn {
+      font-size: .7rem;
+      font-weight: 600;
+      color: #fff;
+      background: var(--color-accent);
+      border-radius: 100px;
+      padding: 4px 10px;
+    }
+    .rcd-recipe { border-top: 1px solid var(--color-border); padding-top: 16px; }
+    .rcd-recipe-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+    .rcd-emoji-wrap {
+      width: 48px; height: 48px;
+      border-radius: 14px;
+      background: var(--color-accent-pale);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+    }
+    .rcd-heart {
+      font-size: 1.3rem;
+      color: #E53E3E;
+    }
+    .rcd-name {
+      font-size: .95rem;
+      font-weight: 700;
+      margin-bottom: 2px;
+    }
+    .rcd-meta {
+      font-size: .72rem;
+      color: var(--color-text-muted);
+      margin-bottom: 12px;
+    }
+    .rcd-ingredients { display: flex; flex-direction: column; gap: 6px; }
+    .rcd-ing {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: .78rem;
+      color: var(--color-text-secondary);
+    }
+    .rcd-ing::before {
+      content: '';
+      width: 4px; height: 4px;
+      border-radius: 50%;
+      background: var(--color-accent);
+      flex-shrink: 0;
+    }
+
+    /* Schedule Illustration */
+    .schedule-demo {
+      background: var(--color-bg-dark);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-lg);
+      padding: 24px;
+      max-width: 480px;
+      margin: 0 auto;
+      border: 1px solid var(--color-border-dark);
+    }
+    .sd-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+    }
+    .sd-title {
+      font-size: .95rem;
+      font-weight: 700;
+      color: var(--color-text-inverse);
+    }
+    .sd-week-label {
+      font-size: .72rem;
+      color: var(--color-text-muted-inv);
+    }
+    .sd-grid {
+      display: grid;
+      grid-template-columns: 64px repeat(7, 1fr);
+      gap: 5px;
+    }
+    .sd-row-label {
+      font-size: .62rem;
+      font-weight: 600;
+      color: var(--color-text-muted-inv);
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      display: flex;
+      align-items: center;
+      padding-right: 4px;
+    }
+    .sd-day-header {
+      text-align: center;
+      font-size: .6rem;
+      font-weight: 600;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      color: var(--color-text-muted-inv);
+      padding-bottom: 6px;
+    }
+    .sd-cell {
+      border-radius: 7px;
+      min-height: 42px;
+      padding: 5px;
+      font-size: .58rem;
+      font-weight: 500;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      gap: 2px;
+      position: relative;
+    }
+    .sd-cell--filled {
+      background: rgba(74,124,89,.25);
+      color: #9fcfab;
+      border: 1px solid rgba(74,124,89,.3);
+    }
+    .sd-cell--filled2 {
+      background: rgba(251,146,60,.15);
+      color: #fba23a;
+      border: 1px solid rgba(251,146,60,.25);
+    }
+    .sd-cell--filled3 {
+      background: rgba(99,102,241,.15);
+      color: #a5b4fc;
+      border: 1px solid rgba(99,102,241,.25);
+    }
+    .sd-cell--empty {
+      background: rgba(255,255,255,.04);
+      border: 1px dashed rgba(255,255,255,.1);
+    }
+    .sd-badge {
+      position: absolute;
+      top: 2px;
+      right: 2px;
+      background: var(--color-accent);
+      color: #fff;
+      font-size: .48rem;
+      font-weight: 700;
+      border-radius: 100px;
+      padding: 1px 4px;
+      line-height: 1.4;
+    }
+    .sd-plus {
+      color: rgba(255,255,255,.25);
+      font-size: .9rem;
+    }
+
+    /* Shopping List Illustration */
+    .shopping-demo {
+      background: var(--color-bg-card);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-lg);
+      overflow: hidden;
+      max-width: 340px;
+      margin: 0 auto;
+      border: 1px solid var(--color-border-dark);
+    }
+    .sld-header {
+      background: var(--color-bg-dark);
+      padding: 16px 20px;
+    }
+    .sld-generate-btn {
+      width: 100%;
+      background: var(--color-accent);
+      color: #fff;
+      border-radius: var(--radius-sm);
+      padding: 10px;
+      font-size: .8rem;
+      font-weight: 600;
+      text-align: center;
+      margin-bottom: 12px;
+    }
+    .sld-stats {
+      display: flex;
+      gap: 12px;
+    }
+    .sld-stat {
+      font-size: .65rem;
+      color: var(--color-text-muted-inv);
+    }
+    .sld-stat strong {
+      display: block;
+      font-size: .85rem;
+      color: var(--color-text-inverse);
+      font-weight: 700;
+    }
+    .sld-body { padding: 16px 20px; }
+    .sld-section-label {
+      font-size: .62rem;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--color-text-muted);
+      margin-bottom: 10px;
+      margin-top: 14px;
+    }
+    .sld-section-label:first-child { margin-top: 0; }
+    .sld-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--color-border);
+      font-size: .82rem;
+    }
+    .sld-item:last-child { border-bottom: none; }
+    .sld-check {
+      width: 18px; height: 18px;
+      border-radius: 50%;
+      border: 1.5px solid var(--color-border);
+      flex-shrink: 0;
+    }
+    .sld-check--done {
+      background: var(--color-accent);
+      border-color: var(--color-accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .sld-check--done::after {
+      content: '✓';
+      color: #fff;
+      font-size: .6rem;
+      font-weight: 700;
+    }
+    .sld-item-name { flex: 1; color: var(--color-text-primary); }
+    .sld-item-qty { font-size: .72rem; color: var(--color-text-muted); }
+    .sld-item--excluded .sld-item-name {
+      text-decoration: line-through;
+      opacity: .4;
+    }
+    .sld-pantry-tag {
+      font-size: .6rem;
+      color: var(--color-accent);
+      background: var(--color-accent-pale);
+      padding: 1px 6px;
+      border-radius: 100px;
+      font-weight: 600;
+    }
+
+    /* Family Illustration */
+    .family-demo {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
+      max-width: 340px;
+      margin: 0 auto;
+    }
+    .fam-avatars {
+      display: flex;
+      gap: -8px;
+      margin-bottom: 16px;
+      position: relative;
+    }
+    .fam-avatar {
+      width: 60px; height: 60px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: #fff;
+      border: 3px solid var(--color-bg-dark);
+      margin-left: -10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,.3);
+      position: relative;
+    }
+    .fam-avatar:first-child { margin-left: 0; }
+    .fam-avatar--a { background: #4A7C59; }
+    .fam-avatar--b { background: #7B5EA7; }
+    .fam-avatar--c { background: #C77D37; }
+    .fam-avatar--d { background: #2B7A9E; }
+    .fam-active-dot {
+      position: absolute;
+      bottom: 1px; right: 1px;
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: #34D058;
+      border: 2px solid var(--color-bg-dark);
+    }
+    .fam-connector {
+      width: 2px;
+      height: 28px;
+      background: linear-gradient(to bottom, rgba(74,124,89,.5), rgba(74,124,89,.15));
+      margin: 0 auto;
+    }
+    .fam-plan-card {
+      background: rgba(255,255,255,.06);
+      border: 1px solid var(--color-border-dark);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      width: 100%;
+    }
+    .fam-plan-mini {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 4px;
+      margin-bottom: 12px;
+    }
+    .fpm-cell {
+      height: 22px;
+      border-radius: 4px;
+      background: rgba(74,124,89,.2);
+      border: 1px solid rgba(74,124,89,.2);
+    }
+    .fpm-cell--empty {
+      background: rgba(255,255,255,.04);
+      border-color: rgba(255,255,255,.08);
+    }
+    .fam-notif {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(74,124,89,.15);
+      border-radius: var(--radius-sm);
+      padding: 8px 10px;
+      border: 1px solid rgba(74,124,89,.25);
+    }
+    .fam-notif-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--color-accent-light);
+      flex-shrink: 0;
+      box-shadow: 0 0 6px rgba(107,158,122,.6);
+    }
+    .fam-notif-text {
+      font-size: .72rem;
+      color: #9fcfab;
+    }
+    .fam-notif-text strong { color: #c5e8cf; }
+
+    /* Reminders Illustration */
+    .reminders-demo {
+      background: var(--color-bg-card);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-lg);
+      overflow: hidden;
+      max-width: 320px;
+      margin: 0 auto;
+      border: 1px solid var(--color-border);
+    }
+    .rem-topbar {
+      background: #F2F2F7;
+      padding: 12px 16px 10px;
+      border-bottom: 1px solid #E5E5EA;
+    }
+    .rem-topbar-title {
+      font-size: .72rem;
+      font-weight: 600;
+      color: #6E6E73;
+      text-align: center;
+    }
+    .rem-list-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 16px 20px 12px;
+      border-bottom: 1px solid #E5E5EA;
+    }
+    .rem-icon {
+      width: 36px; height: 36px;
+      border-radius: 9px;
+      background: var(--color-accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+    }
+    .rem-title-text {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #1C1C1E;
+    }
+    .rem-count {
+      margin-left: auto;
+      font-size: .8rem;
+      color: #8E8E93;
+    }
+    .rem-items { padding: 8px 0; }
+    .rem-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 20px;
+      border-bottom: 1px solid #F2F2F7;
+      font-size: .88rem;
+      color: #1C1C1E;
+    }
+    .rem-item:last-child { border-bottom: none; }
+    .rem-item-circle {
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      border: 2px solid var(--color-accent);
+      flex-shrink: 0;
+    }
+    .rem-item-circle--done {
+      background: var(--color-accent);
+      border-color: var(--color-accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .rem-item-circle--done::after {
+      content: '✓';
+      color: #fff;
+      font-size: .7rem;
+      font-weight: 700;
+    }
+    .rem-item--done .rem-item-text {
+      text-decoration: line-through;
+      color: #8E8E93;
+    }
+    .rem-item-text { flex: 1; }
+    .rem-export-btn {
+      margin: 12px 20px 16px;
+      background: var(--color-accent);
+      color: #fff;
+      border-radius: var(--radius-sm);
+      padding: 12px;
+      font-size: .85rem;
+      font-weight: 600;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    /* ============================================================
+       10. HOW IT WORKS
+    ============================================================ */
+    .hiw-header { text-align: center; margin-bottom: 56px; }
+    .hiw-header .t-section { margin-top: 12px; }
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      position: relative;
+    }
+    .steps-grid::before {
+      content: '';
+      position: absolute;
+      top: 52px;
+      left: calc(33.33% / 2 + 24px);
+      right: calc(33.33% / 2 + 24px);
+      height: 1px;
+      background: linear-gradient(to right, transparent, var(--color-border), var(--color-border), transparent);
+    }
+    .step-card {
+      background: var(--color-bg-card);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--color-border);
+      padding: 32px 28px;
+      text-align: center;
+      box-shadow: var(--shadow-sm);
+      position: relative;
+    }
+    .step-number {
+      position: absolute;
+      top: -14px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      background: var(--color-accent);
+      color: #fff;
+      font-size: .75rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .step-emoji {
+      font-size: 2.5rem;
+      margin-bottom: 16px;
+      margin-top: 12px;
+    }
+    .step-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+    .step-body {
+      font-size: .9rem;
+      color: var(--color-text-secondary);
+      line-height: 1.6;
+    }
+
+    /* ============================================================
+       11. QUOTE
+    ============================================================ */
+    .quote-inner {
+      max-width: 760px;
+      margin: 0 auto;
+      text-align: center;
+    }
+    .quote-mark {
+      font-size: 5rem;
+      line-height: 1;
+      color: var(--color-accent);
+      opacity: .4;
+      font-family: Georgia, serif;
+      margin-bottom: -20px;
+    }
+    .quote-text {
+      font-size: clamp(1.3rem, 3vw, 2rem);
+      font-weight: 600;
+      line-height: 1.45;
+      letter-spacing: -.01em;
+      color: var(--color-text-inverse);
+      margin-bottom: 28px;
+    }
+    .quote-attr {
+      font-size: .9rem;
+      color: var(--color-text-muted-inv);
+    }
+
+    /* ============================================================
+       12. FINAL CTA
+    ============================================================ */
+    .cta-inner {
+      text-align: center;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    .cta-icon {
+      width: 88px; height: 88px;
+      border-radius: 22px;
+      background: var(--color-accent);
+      margin: 0 auto 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.5rem;
+      box-shadow: 0 8px 32px rgba(74,124,89,.45);
+    }
+    .cta-headline { margin-bottom: 16px; }
+    .cta-sub {
+      font-size: 1.05rem;
+      color: var(--color-text-secondary);
+      margin-bottom: 36px;
+    }
+    .appstore-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: #1A1A18;
+      color: #fff;
+      border-radius: 14px;
+      padding: 12px 24px;
+      font-size: .85rem;
+      font-weight: 500;
+      line-height: 1.3;
+      text-align: left;
+      transition: transform .15s ease, box-shadow .15s ease;
+      box-shadow: 0 4px 16px rgba(0,0,0,.2);
+    }
+    .appstore-badge:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0,0,0,.3);
+    }
+    .appstore-badge-text-top {
+      font-size: .65rem;
+      font-weight: 400;
+      opacity: .8;
+    }
+    .appstore-badge-text-bottom {
+      font-size: 1.05rem;
+      font-weight: 700;
+    }
+    .cta-legal {
+      margin-top: 20px;
+      font-size: .78rem;
+      color: var(--color-text-muted);
+    }
+
+    /* ============================================================
+       13. FOOTER
+    ============================================================ */
+    footer {
+      background: var(--color-bg-dark2);
+      color: var(--color-text-muted-inv);
+      padding: 64px 0 32px;
+      border-top: 1px solid var(--color-border-dark);
+    }
+    .footer-inner {
+      display: grid;
+      grid-template-columns: 1.5fr 1fr 1fr;
+      gap: 48px;
+      margin-bottom: 48px;
+    }
+    .footer-brand {}
+    .footer-logo {
+      font-size: 1.2rem;
+      font-weight: 800;
+      letter-spacing: -.03em;
+      color: var(--color-text-inverse);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 12px;
+    }
+    .footer-tagline {
+      font-size: .85rem;
+      color: var(--color-text-muted-inv);
+      line-height: 1.6;
+      max-width: 240px;
+    }
+    .footer-col-title {
+      font-size: .78rem;
+      font-weight: 600;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      color: var(--color-text-inverse);
+      margin-bottom: 16px;
+    }
+    .footer-links { display: flex; flex-direction: column; gap: 10px; }
+    .footer-links a {
+      font-size: .85rem;
+      color: var(--color-text-muted-inv);
+      transition: color .15s;
+    }
+    .footer-links a:hover { color: var(--color-text-inverse); }
+    .footer-bottom {
+      border-top: 1px solid var(--color-border-dark);
+      padding-top: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .footer-copyright { font-size: .78rem; }
+
+    /* ============================================================
+       14. ANIMATIONS
+    ============================================================ */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(28px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes float {
+      0%, 100% { transform: rotate(1.5deg) translateY(0); }
+      50%       { transform: rotate(1.5deg) translateY(-8px); }
+    }
+    @keyframes floatNeg {
+      0%, 100% { transform: rotate(-1.5deg) translateY(0); }
+      50%       { transform: rotate(-1.5deg) translateY(-6px); }
+    }
+
+    .week-card { animation: float 4s ease-in-out infinite; }
+    .floating-card { animation: floatNeg 4s ease-in-out infinite; animation-delay: .5s; }
+
+    .animate-on-scroll {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity .65s cubic-bezier(.16,1,.3,1), transform .65s cubic-bezier(.16,1,.3,1);
+      will-change: transform, opacity;
+    }
+    .animate-on-scroll.visible {
+      opacity: 1;
+      transform: none;
+    }
+
+    /* Hero text fades in on load */
+    .hero-label  { animation: fadeUp .6s .1s both ease; }
+    .hero-headline { animation: fadeUp .6s .2s both ease; }
+    .hero-sub    { animation: fadeUp .6s .3s both ease; }
+    .hero-ctas   { animation: fadeUp .6s .4s both ease; }
+    .hero-visual { animation: fadeUp .7s .35s both ease; }
+
+    /* ============================================================
+       15. MEDIA QUERIES
+    ============================================================ */
+    @media (max-width: 1024px) {
+      .hero-inner { gap: 40px; }
+      .feature-layout { gap: 40px; }
+    }
+
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .hero-inner {
+        grid-template-columns: 1fr;
+        text-align: center;
+      }
+      .hero-text { max-width: 100%; }
+      .btn-group { justify-content: center; }
+      .hero-visual { order: -1; }
+      .week-card { transform: rotate(0); animation: none; }
+      .floating-card { display: none; }
+
+      .feature-layout {
+        grid-template-columns: 1fr;
+        text-align: center;
+      }
+      .feature-layout--flip .feat-visual { order: 0; }
+      .feat-body { max-width: 100%; }
+      .bullet-list li { justify-content: center; }
+
+      .steps-grid {
+        grid-template-columns: 1fr;
+        gap: 32px;
+      }
+      .steps-grid::before { display: none; }
+
+      .footer-inner { grid-template-columns: 1fr 1fr; }
+      .footer-brand { grid-column: 1 / -1; }
+    }
+
+    @media (max-width: 480px) {
+      .week-grid { grid-template-columns: repeat(4, 1fr); }
+      .wg-day:nth-child(n+5) { display: none; }
+      .sd-grid { grid-template-columns: 48px repeat(5, 1fr); }
+      .sd-day-header:nth-child(n+8),
+      .sd-cell:nth-child(7n+1) ~ .sd-cell:nth-last-child(-n+2) { display: none; }
+      .footer-inner { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ============================================================
+       NAVIGATION
+  ============================================================ -->
+  <nav>
+    <div class="container">
+      <div class="nav-inner">
+        <a href="#" class="nav-logo">
+          <span class="nav-logo-dot"></span>
+          Plait
+        </a>
+        <div class="nav-links">
+          <a href="#recipes">Recipes</a>
+          <a href="#planning">Planning</a>
+          <a href="#shopping">Shopping</a>
+          <a href="#family">Family</a>
+          <a href="#download" class="btn btn--primary" style="padding:10px 22px;font-size:.85rem;">Download</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ============================================================
+       HERO
+  ============================================================ -->
+  <section id="hero">
+    <div class="container">
+      <div class="hero-inner">
+        <div class="hero-text">
+          <p class="t-label hero-label">Meal Planning for iPhone</p>
+          <h1 class="t-hero hero-headline">Dinner,<br/>already<br/>handled.</h1>
+          <p class="hero-sub">Plait brings your recipes, weekly meal schedule, and grocery list together — shared with your whole family.</p>
+          <div class="btn-group hero-ctas">
+            <a href="#download" class="btn btn--primary">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 1v10M4 7l4 4 4-4M2 14h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              Download on the App Store
+            </a>
+            <a href="#how-it-works" class="btn btn--ghost">See how it works ↓</a>
+          </div>
+        </div>
+
+        <div class="hero-visual">
+          <div class="week-card">
+            <div class="week-card-header">
+              <div>
+                <div class="week-card-title">This Week</div>
+                <div class="week-card-sub">Mar 17 – 23</div>
+              </div>
+              <div class="t-label" style="font-size:.65rem;">7 meals planned</div>
+            </div>
+            <div class="week-grid">
+              <div class="wg-day">
+                <div class="wg-day-label">Mon</div>
+                <div class="wg-meal wg-meal--filled"><span class="wg-meal-emoji">🍝</span>Pasta</div>
+                <div class="wg-meal wg-meal--empty">+</div>
+              </div>
+              <div class="wg-day">
+                <div class="wg-day-label">Tue</div>
+                <div class="wg-meal wg-meal--filled2"><span class="wg-meal-emoji">🍗</span>Chicken</div>
+                <div class="wg-meal wg-meal--filled3"><span class="wg-meal-emoji">🥗</span>Salad</div>
+              </div>
+              <div class="wg-day">
+                <div class="wg-day-label">Wed</div>
+                <div class="wg-meal wg-meal--empty">+</div>
+                <div class="wg-meal wg-meal--filled"><span class="wg-meal-emoji">🍲</span>Stew</div>
+              </div>
+              <div class="wg-day">
+                <div class="wg-day-label">Thu</div>
+                <div class="wg-meal wg-meal--filled3"><span class="wg-meal-emoji">🥦</span>Stir-fry</div>
+                <div class="wg-meal wg-meal--empty">+</div>
+              </div>
+              <div class="wg-day">
+                <div class="wg-day-label">Fri</div>
+                <div class="wg-meal wg-meal--filled2"><span class="wg-meal-emoji">🍕</span>Pizza</div>
+                <div class="wg-meal wg-meal--filled"><span class="wg-meal-emoji">🥗</span>Salad</div>
+              </div>
+              <div class="wg-day">
+                <div class="wg-day-label">Sat</div>
+                <div class="wg-meal wg-meal--filled"><span class="wg-meal-emoji">🍳</span>Brunch</div>
+                <div class="wg-meal wg-meal--filled3"><span class="wg-meal-emoji">🍜</span>Ramen</div>
+              </div>
+              <div class="wg-day">
+                <div class="wg-day-label">Sun</div>
+                <div class="wg-meal wg-meal--filled2"><span class="wg-meal-emoji">🥩</span>Roast</div>
+                <div class="wg-meal wg-meal--empty">+</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="floating-card">
+            <div class="fc-title">Shopping List</div>
+            <div class="fc-items">
+              <div class="fc-item"><span class="fc-item-dot"></span>🥦 Broccoli</div>
+              <div class="fc-item"><span class="fc-item-dot"></span>🍗 Chicken breast</div>
+              <div class="fc-item"><span class="fc-item-dot"></span>🧄 Garlic</div>
+              <div class="fc-item"><span class="fc-item-dot"></span>🍋 Lemon × 2</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       RECIPES
+  ============================================================ -->
+  <section id="recipes" class="section section--secondary">
+    <div class="container">
+      <div class="feature-layout">
+        <div class="feat-text animate-on-scroll">
+          <p class="t-label">Recipes</p>
+          <h2 class="t-feature feat-title">Save any recipe from anywhere.</h2>
+          <p class="t-body-lg feat-body">Paste a URL from any food site and Plait imports the ingredients automatically. Or build your own from scratch. Mark favorites to keep the ones you love close at hand.</p>
+          <ul class="bullet-list">
+            <li>Import from any recipe website with a single URL</li>
+            <li>Manual recipe builder with ingredient scaling</li>
+            <li>Favourite recipes for quick access</li>
+            <li>Automatic serving-size adjustment</li>
+          </ul>
+          <div class="chips">
+            <span class="chip">🔗 Import from URL</span>
+            <span class="chip">✏️ Manual Entry</span>
+            <span class="chip">♥ Favourites</span>
+          </div>
+        </div>
+        <div class="feat-visual animate-on-scroll">
+          <div class="recipe-card-demo">
+            <div class="rcd-import-bar">
+              <span class="rcd-url-icon">🔗</span>
+              <span class="rcd-url-text">bonappetit.com/recipe/one-pot-pasta</span>
+              <span class="rcd-import-btn">Import</span>
+            </div>
+            <div class="rcd-recipe">
+              <div class="rcd-recipe-head">
+                <div class="rcd-emoji-wrap">🍝</div>
+                <span class="rcd-heart">♥</span>
+              </div>
+              <div class="rcd-name">One-Pot Pasta</div>
+              <div class="rcd-meta">4 servings · 30 min · Italian</div>
+              <div class="rcd-ingredients">
+                <div class="rcd-ing">400g spaghetti</div>
+                <div class="rcd-ing">2 cloves garlic, minced</div>
+                <div class="rcd-ing">400ml cherry tomatoes</div>
+                <div class="rcd-ing">60ml extra-virgin olive oil</div>
+                <div class="rcd-ing">Fresh basil, to serve</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       MEAL PLANNING
+  ============================================================ -->
+  <section id="planning" class="section">
+    <div class="container">
+      <div class="feature-layout feature-layout--flip">
+        <div class="feat-text animate-on-scroll">
+          <p class="t-label">Meal Planning</p>
+          <h2 class="t-feature feat-title">The week,<br/>mapped out.</h2>
+          <p class="t-body-lg feat-body">Assign recipes to any day of the week across breakfast, lunch, and dinner slots. Adjust servings per meal — feeding two tonight, eight on Sunday? Plait scales everything automatically.</p>
+          <ul class="bullet-list">
+            <li>Breakfast, lunch &amp; dinner slots per day</li>
+            <li>Per-meal serving adjustments</li>
+            <li>Shopping list updates in real time</li>
+            <li>Copy last week's plan in one tap</li>
+          </ul>
+          <div class="chips">
+            <span class="chip">📅 7-day view</span>
+            <span class="chip">👥 Serving control</span>
+            <span class="chip">🔄 Repeat meals</span>
+          </div>
+        </div>
+        <div class="feat-visual animate-on-scroll">
+          <div class="schedule-demo">
+            <div class="sd-header">
+              <span class="sd-title">Meal Schedule</span>
+              <span class="sd-week-label">Week of Mar 17</span>
+            </div>
+            <div class="sd-grid">
+              <!-- Headers -->
+              <div></div>
+              <div class="sd-day-header">Mon</div>
+              <div class="sd-day-header">Tue</div>
+              <div class="sd-day-header">Wed</div>
+              <div class="sd-day-header">Thu</div>
+              <div class="sd-day-header">Fri</div>
+              <div class="sd-day-header">Sat</div>
+              <div class="sd-day-header">Sun</div>
+              <!-- Breakfast row -->
+              <div class="sd-row-label">Break&shy;fast</div>
+              <div class="sd-cell sd-cell--filled"><span>🍳</span>Eggs</div>
+              <div class="sd-cell sd-cell--empty"><span class="sd-plus">+</span></div>
+              <div class="sd-cell sd-cell--filled3"><span>🥞</span>Pan&shy;cakes</div>
+              <div class="sd-cell sd-cell--empty"><span class="sd-plus">+</span></div>
+              <div class="sd-cell sd-cell--filled"><span>🥣</span>Oats</div>
+              <div class="sd-cell sd-cell--empty"><span class="sd-plus">+</span></div>
+              <div class="sd-cell sd-cell--filled2"><span>🥐</span>Brunch</div>
+              <!-- Dinner row -->
+              <div class="sd-row-label">Dinner</div>
+              <div class="sd-cell sd-cell--filled2"><span>🍝</span>Pasta<div class="sd-badge">×4</div></div>
+              <div class="sd-cell sd-cell--filled"><span>🍗</span>Chicken</div>
+              <div class="sd-cell sd-cell--empty"><span class="sd-plus">+</span></div>
+              <div class="sd-cell sd-cell--filled3"><span>🥦</span>Stir-fry</div>
+              <div class="sd-cell sd-cell--filled2"><span>🍕</span>Pizza</div>
+              <div class="sd-cell sd-cell--filled"><span>🍜</span>Ramen</div>
+              <div class="sd-cell sd-cell--filled2"><span>🥩</span>Roast<div class="sd-badge">×8</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SHOPPING LIST
+  ============================================================ -->
+  <section id="shopping" class="section section--dark">
+    <div class="container">
+      <div class="feature-layout">
+        <div class="feat-text animate-on-scroll">
+          <p class="t-label t-label--inv">Shopping</p>
+          <h2 class="t-feature feat-title" style="color:var(--color-text-inverse);">Your grocery list<br/>writes itself.</h2>
+          <p class="t-body-lg feat-body t-body-lg--inv">Plait reads your weekly plan and builds a consolidated shopping list — no duplicates, quantities combined. Already have olive oil? Mark it as pantry stock and it vanishes from the list.</p>
+          <ul class="bullet-list bullet-list--inv">
+            <li>Auto-generated from your weekly meal plan</li>
+            <li>Pantry exclusion — mark what you already have</li>
+            <li>Quantities automatically consolidated</li>
+            <li>Grouped by ingredient category</li>
+          </ul>
+          <div class="chips">
+            <span class="chip chip--dark">🥫 Pantry sync</span>
+            <span class="chip chip--dark">✓ Check off</span>
+            <span class="chip chip--dark">📦 Grouped aisles</span>
+          </div>
+        </div>
+        <div class="feat-visual animate-on-scroll">
+          <div class="shopping-demo">
+            <div class="sld-header">
+              <div class="sld-generate-btn">✨ Generate from this week's plan</div>
+              <div class="sld-stats">
+                <div class="sld-stat"><strong>18</strong>items</div>
+                <div class="sld-stat"><strong>3</strong>excluded</div>
+                <div class="sld-stat"><strong>15</strong>to buy</div>
+              </div>
+            </div>
+            <div class="sld-body">
+              <div class="sld-section-label">🥬 Produce</div>
+              <div class="sld-item">
+                <div class="sld-check"></div>
+                <span class="sld-item-name">Broccoli</span>
+                <span class="sld-item-qty">1 head</span>
+              </div>
+              <div class="sld-item">
+                <div class="sld-check"></div>
+                <span class="sld-item-name">Cherry tomatoes</span>
+                <span class="sld-item-qty">400g</span>
+              </div>
+              <div class="sld-item sld-item--excluded">
+                <div class="sld-check sld-check--done"></div>
+                <span class="sld-item-name">Garlic</span>
+                <span class="sld-pantry-tag">In pantry</span>
+              </div>
+
+              <div class="sld-section-label">🧈 Dairy</div>
+              <div class="sld-item">
+                <div class="sld-check"></div>
+                <span class="sld-item-name">Parmesan</span>
+                <span class="sld-item-qty">100g</span>
+              </div>
+              <div class="sld-item sld-item--excluded">
+                <div class="sld-check sld-check--done"></div>
+                <span class="sld-item-name">Olive oil</span>
+                <span class="sld-pantry-tag">In pantry</span>
+              </div>
+
+              <div class="sld-section-label">🥩 Meat</div>
+              <div class="sld-item">
+                <div class="sld-check"></div>
+                <span class="sld-item-name">Chicken breast</span>
+                <span class="sld-item-qty">800g</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       FAMILY COLLABORATION
+  ============================================================ -->
+  <section id="family" class="section">
+    <div class="container">
+      <div class="feature-layout feature-layout--flip">
+        <div class="feat-text animate-on-scroll">
+          <p class="t-label">Family</p>
+          <h2 class="t-feature feat-title">Meal planning<br/>is a team sport.</h2>
+          <p class="t-body-lg feat-body">Invite your partner, roommates, or the whole family. Everyone sees the same plan, anyone can add meals or check off items at the store — all in real time.</p>
+          <ul class="bullet-list">
+            <li>Share with up to 6 family members</li>
+            <li>Real-time sync — changes appear instantly</li>
+            <li>Shared pantry inventory</li>
+            <li>Activity feed — see who changed what</li>
+          </ul>
+          <div class="chips">
+            <span class="chip">👨‍👩‍👧 Family sharing</span>
+            <span class="chip">⚡ Live sync</span>
+            <span class="chip">🏠 Shared pantry</span>
+          </div>
+        </div>
+        <div class="feat-visual animate-on-scroll">
+          <div class="family-demo">
+            <div class="fam-avatars">
+              <div class="fam-avatar fam-avatar--a">A<div class="fam-active-dot"></div></div>
+              <div class="fam-avatar fam-avatar--b">J</div>
+              <div class="fam-avatar fam-avatar--c">M<div class="fam-active-dot"></div></div>
+              <div class="fam-avatar fam-avatar--d">L</div>
+            </div>
+            <div class="fam-connector"></div>
+            <div class="fam-plan-card">
+              <div class="fam-plan-mini">
+                <div class="fpm-cell"></div>
+                <div class="fpm-cell"></div>
+                <div class="fpm-cell fpm-cell--empty"></div>
+                <div class="fpm-cell"></div>
+                <div class="fpm-cell"></div>
+                <div class="fpm-cell fpm-cell--empty"></div>
+                <div class="fpm-cell"></div>
+              </div>
+              <div class="fam-notif">
+                <div class="fam-notif-dot"></div>
+                <div class="fam-notif-text"><strong>Alex</strong> added Sunday Roast for 8 — just now</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       iOS REMINDERS
+  ============================================================ -->
+  <section id="reminders" class="section section--pale">
+    <div class="container">
+      <div class="feature-layout">
+        <div class="feat-text animate-on-scroll">
+          <p class="t-label">Native iOS Integration</p>
+          <h2 class="t-feature feat-title">Shop right from<br/>Reminders.</h2>
+          <p class="t-body-lg feat-body">With one tap, Plait sends your entire grocery list to iOS Reminders. Check off items as you shop using the app you already know — it works with Siri, Apple Watch, and every device on your iCloud account.</p>
+          <ul class="bullet-list">
+            <li>Export to iOS Reminders in one tap</li>
+            <li>Works with Siri &amp; Apple Watch</li>
+            <li>Syncs across all your Apple devices</li>
+            <li>Check off items hands-free while shopping</li>
+          </ul>
+          <div class="chips">
+            <span class="chip">🍎 iOS Native</span>
+            <span class="chip">⌚ Apple Watch</span>
+            <span class="chip">☁️ iCloud Sync</span>
+          </div>
+        </div>
+        <div class="feat-visual animate-on-scroll">
+          <div class="reminders-demo">
+            <div class="rem-topbar">
+              <div class="rem-topbar-title">iOS Reminders</div>
+            </div>
+            <div class="rem-list-title">
+              <div class="rem-icon">🛒</div>
+              <div class="rem-title-text">Grocery List</div>
+              <div class="rem-count">9 items</div>
+            </div>
+            <div class="rem-items">
+              <div class="rem-item rem-item--done">
+                <div class="rem-item-circle rem-item-circle--done"></div>
+                <span class="rem-item-text">Cherry tomatoes</span>
+              </div>
+              <div class="rem-item rem-item--done">
+                <div class="rem-item-circle rem-item-circle--done"></div>
+                <span class="rem-item-text">Chicken breast</span>
+              </div>
+              <div class="rem-item">
+                <div class="rem-item-circle"></div>
+                <span class="rem-item-text">Broccoli</span>
+              </div>
+              <div class="rem-item">
+                <div class="rem-item-circle"></div>
+                <span class="rem-item-text">Parmesan</span>
+              </div>
+              <div class="rem-item">
+                <div class="rem-item-circle"></div>
+                <span class="rem-item-text">Spaghetti 400g</span>
+              </div>
+            </div>
+            <div class="rem-export-btn">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1v8M3.5 5.5L7 9l3.5-3.5M1 12h12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              Export to Reminders
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       HOW IT WORKS
+  ============================================================ -->
+  <section id="how-it-works" class="section section--secondary">
+    <div class="container">
+      <div class="hiw-header animate-on-scroll">
+        <p class="t-label">How It Works</p>
+        <h2 class="t-section">Three steps to a<br/>stress-free week.</h2>
+      </div>
+      <div class="steps-grid">
+        <div class="step-card animate-on-scroll">
+          <div class="step-number">1</div>
+          <div class="step-emoji">🍴</div>
+          <div class="step-title">Add your recipes</div>
+          <p class="step-body">Import from any food website by pasting a URL, or build your own from scratch. Build a library of your family's favourites.</p>
+        </div>
+        <div class="step-card animate-on-scroll">
+          <div class="step-number">2</div>
+          <div class="step-emoji">📅</div>
+          <div class="step-title">Plan your week</div>
+          <p class="step-body">Assign recipes to any day and meal slot. Adjust servings per meal — Plait scales every ingredient automatically.</p>
+        </div>
+        <div class="step-card animate-on-scroll">
+          <div class="step-number">3</div>
+          <div class="step-emoji">🛒</div>
+          <div class="step-title">Shop with ease</div>
+          <p class="step-body">Your shopping list is ready. Exclude what's in the pantry, export to iOS Reminders, and check off items as you go.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       PULL QUOTE
+  ============================================================ -->
+  <section class="section section--dark">
+    <div class="container">
+      <div class="quote-inner animate-on-scroll">
+        <div class="quote-mark">"</div>
+        <p class="quote-text">I used to spend 20 minutes every Sunday figuring out what to buy. Now it takes 30 seconds — and I never forget anything.</p>
+        <p class="quote-attr">— Early access user</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       FINAL CTA
+  ============================================================ -->
+  <section id="download" class="section">
+    <div class="container">
+      <div class="cta-inner animate-on-scroll">
+        <div class="cta-icon">🥗</div>
+        <h2 class="t-section cta-headline">Ready to plan<br/>smarter?</h2>
+        <p class="cta-sub">Free to download. Available on iPhone and iPad.</p>
+        <a href="#" class="appstore-badge" aria-label="Download on the App Store">
+          <svg width="24" height="28" viewBox="0 0 24 28" fill="white"><path d="M18.7 14.8c0-3.5 2.9-5.2 3-5.3-1.6-2.4-4.2-2.7-5.1-2.7-2.2-.2-4.2 1.3-5.3 1.3-1.1 0-2.8-1.2-4.6-1.2C4.1 7 1.5 8.5.3 10.9c-2.4 4.9-.6 12.1 1.7 16.1 1.1 1.9 2.5 4.1 4.3 4 1.7-.1 2.4-1.1 4.4-1.1 2.1 0 2.7 1.1 4.5 1.1 1.9 0 3.1-2 4.2-3.9 1.3-2.2 1.9-4.4 1.9-4.5-.1 0-3.6-1.8-3.6-5.8zM15.1 5c.9-1.1 1.5-2.7 1.4-4.2-1.3.1-2.9.9-3.9 2-.9 1-1.6 2.6-1.4 4.1 1.5.1 3-.7 3.9-1.9z"/></svg>
+          <div>
+            <div class="appstore-badge-text-top">Download on the</div>
+            <div class="appstore-badge-text-bottom">App Store</div>
+          </div>
+        </a>
+        <p class="cta-legal">Requires iOS 17 or later. Compatible with iPhone and iPad.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       FOOTER
+  ============================================================ -->
+  <footer>
+    <div class="container">
+      <div class="footer-inner">
+        <div class="footer-brand">
+          <div class="footer-logo">
+            <span class="nav-logo-dot"></span>
+            Plait
+          </div>
+          <p class="footer-tagline">Plan together. Eat better.<br/>Weekly meal planning for families, on iPhone and iPad.</p>
+        </div>
+        <div class="footer-col">
+          <div class="footer-col-title">Product</div>
+          <ul class="footer-links">
+            <li><a href="#recipes">Recipe Management</a></li>
+            <li><a href="#planning">Meal Planning</a></li>
+            <li><a href="#shopping">Shopping Lists</a></li>
+            <li><a href="#family">Family Sharing</a></li>
+            <li><a href="#reminders">iOS Reminders</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <div class="footer-col-title">Legal</div>
+          <ul class="footer-links">
+            <li><a href="#">Privacy Policy</a></li>
+            <li><a href="#">Terms of Use</a></li>
+            <li><a href="#">Contact</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p class="footer-copyright">© 2026 Plait. All rights reserved.</p>
+        <p class="t-caption">Apple, iOS, iPhone, Reminders, and App Store are trademarks of Apple Inc.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ============================================================
+       JAVASCRIPT
+  ============================================================ -->
+  <script>
+    // Sticky nav — frosted glass after 60px scroll
+    const nav = document.querySelector('nav');
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('scrolled', window.scrollY > 60);
+    }, { passive: true });
+
+    // Scroll-reveal with IntersectionObserver
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -48px 0px' });
+
+    document.querySelectorAll('.animate-on-scroll').forEach((el, i) => {
+      // Stagger siblings in the same parent
+      const siblings = el.parentElement.querySelectorAll('.animate-on-scroll');
+      if (siblings.length > 1) {
+        const idx = Array.from(siblings).indexOf(el);
+        el.style.transitionDelay = `${idx * 0.13}s`;
+      }
+      revealObserver.observe(el);
+    });
+  </script>
+</body>
+</html>
