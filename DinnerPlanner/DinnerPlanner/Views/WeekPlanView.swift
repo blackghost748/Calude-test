@@ -10,6 +10,11 @@ struct WeekPlanView: View {
                             (4,"Do","Donnerstag"),(5,"Fr","Freitag"),(6,"Sa","Samstag"),
                             (7,"So","Sonntag")]
     private var weekID: String { MealEntry.currentWeekID() }
+
+    private var navTitle: String {
+        let kwPart = weekID.split(separator: "-").last.map { String($0.dropFirst()) } ?? "?"
+        return "KW \(kwPart)  ·  \(weekLabel)"
+    }
     private var weekLabel: String {
         let cal = Calendar(identifier: .iso8601)
         let parts = weekID.split(separator: "-")
@@ -17,9 +22,9 @@ struct WeekPlanView: View {
             let fmt = DateFormatter()
             fmt.dateFormat = "dd.MM."
             if let monday = cal.date(from: DateComponents(
+                weekday: 2,
                 weekOfYear: week,
-                yearForWeekOfYear: Int(parts[0]) ?? 2024,
-                weekday: 2
+                yearForWeekOfYear: Int(parts[0]) ?? 2024
             )) {
                 let sunday = cal.date(byAdding: .day, value: 6, to: monday)!
                 return "\(fmt.string(from: monday))–\(fmt.string(from: sunday))"
@@ -37,7 +42,7 @@ struct WeekPlanView: View {
                     weekList
                 }
             }
-            .navigationTitle("KW \(weekID.split(separator: "-").last?.dropFirst() ?? "?")  ·  \(weekLabel)")
+            .navigationTitle(navTitle)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
