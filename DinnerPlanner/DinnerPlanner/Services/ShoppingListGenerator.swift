@@ -2,13 +2,15 @@ import Foundation
 
 struct ShoppingListGenerator {
 
-    struct MergeKey: Hashable {
-        let name: String
+    private struct MergeKey: Hashable {
+        let normalizedName: String
         let unit: String
     }
 
     static func generate(from entries: [MealEntry], recipes: [Recipe]) -> [ShoppingItem] {
         var totals: [MergeKey: Double] = [:]
+        // Keep the first display name seen for each key (capitalised original)
+        var displayNames: [MergeKey: String] = [:]
         var order: [MergeKey] = []
 
         for entry in entries {
@@ -18,19 +20,29 @@ struct ShoppingListGenerator {
                     targetServings: entry.servings,
                     defaultServings: recipe.defaultServings
                 )
-                let key = MergeKey(
-                    name: ingredient.name.trimmingCharacters(in: .whitespaces).lowercased(),
-                    unit: ingredient.unit.lowercased()
-                )
-                if totals[key] == nil { order.append(key) }
+                let normalized = IngredientCategorizer.normalize(ingredient.name)
+                let key = MergeKey(normalizedName: normalized, unit: ingredient.unit.lowercased())
+
+                if totals[key] == nil {
+                    order.append(key)
+                    // Capitalise display name
+                    let display = ingredient.name.trimmingCharacters(in: .whitespaces)
+                    displayNames[key] = display.prefix(1).uppercased() + display.dropFirst()
+                }
                 totals[key, default: 0] += scaled
             }
         }
 
         return order.enumerated().compactMap { idx, key -> ShoppingItem? in
-            guard let total = totals[key] else { return nil }
-            let displayName = key.name.prefix(1).uppercased() + key.name.dropFirst()
-            return ShoppingItem(name: displayName, amount: total, unit: key.unit, sortOrder: idx)
+            guard let total = totals[key], let displayName = displayNames[key] else { return nil }
+            let category = IngredientCategorizer.category(for: key.normalizedName)
+            return ShoppingItem(
+                name: displayName,
+                amount: total,
+                unit: key.unit,
+                sortOrder: idx,
+                category: category
+            )
         }
     }
 }

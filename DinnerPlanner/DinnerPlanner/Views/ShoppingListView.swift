@@ -9,8 +9,18 @@ struct ShoppingListView: View {
 
     private var weekID: String { MealEntry.currentWeekID() }
     private var thisWeekEntries: [MealEntry] { store.mealEntries.filter { $0.weekID == weekID } }
-    private var unchecked: [ShoppingItem] { store.shoppingItems.filter { !$0.isChecked }.sorted { $0.sortOrder < $1.sortOrder } }
-    private var checked:   [ShoppingItem] { store.shoppingItems.filter {  $0.isChecked }.sorted { $0.sortOrder < $1.sortOrder } }
+
+    private var unchecked: [ShoppingItem] { store.shoppingItems.filter { !$0.isChecked } }
+    private var checked:   [ShoppingItem] { store.shoppingItems.filter {  $0.isChecked  } }
+
+    /// Unchecked items grouped by category in display order.
+    private var groupedUnchecked: [(category: String, items: [ShoppingItem])] {
+        let byCategory = Dictionary(grouping: unchecked) { $0.category }
+        return IngredientCategorizer.allCategories.compactMap { cat in
+            guard let items = byCategory[cat], !items.isEmpty else { return nil }
+            return (cat, items.sorted { $0.name < $1.name })
+        }
+    }
 
     var body: some View {
         NavigationView {
@@ -23,24 +33,31 @@ struct ShoppingListView: View {
                     )
                 } else {
                     List {
-                        if !unchecked.isEmpty {
-                            Section("Noch kaufen (\(unchecked.count))") {
-                                ForEach(unchecked) { item in
+                        // --- Unchecked items, grouped by category ---
+                        ForEach(groupedUnchecked, id: \.category) { group in
+                            Section(group.category) {
+                                ForEach(group.items) { item in
                                     ShoppingItemRow(item: item)
                                         .swipeActions(edge: .trailing) {
-                                            Button(role: .destructive) { store.deleteShoppingItem(item) } label: {
+                                            Button(role: .destructive) {
+                                                store.deleteShoppingItem(item)
+                                            } label: {
                                                 Label("Löschen", systemImage: "trash")
                                             }
                                         }
                                 }
                             }
                         }
+
+                        // --- Checked items collapsed into one section ---
                         if !checked.isEmpty {
                             Section("Erledigt (\(checked.count))") {
-                                ForEach(checked) { item in
+                                ForEach(checked.sorted { $0.name < $1.name }) { item in
                                     ShoppingItemRow(item: item)
                                         .swipeActions(edge: .trailing) {
-                                            Button(role: .destructive) { store.deleteShoppingItem(item) } label: {
+                                            Button(role: .destructive) {
+                                                store.deleteShoppingItem(item)
+                                            } label: {
                                                 Label("Löschen", systemImage: "trash")
                                             }
                                         }
@@ -90,9 +107,11 @@ struct ShoppingListView: View {
         .navigationViewStyle(.stack)
         .sheet(isPresented: $showingAddItem) {
             AddManualItemView { name, amount, unit in
+                let category = IngredientCategorizer.category(for: name)
                 store.addShoppingItem(ShoppingItem(
                     name: name, amount: amount, unit: unit,
-                    isManual: true, sortOrder: store.shoppingItems.count
+                    isManual: true, sortOrder: store.shoppingItems.count,
+                    category: category
                 ))
             }
         }
@@ -117,8 +136,14 @@ struct ShoppingListView: View {
     }
 
     private func shareList() {
-        let text = unchecked.map { "• \($0.displayText)" }.joined(separator: "\n")
-        guard !text.isEmpty else { return }
+        // Share grouped by category for readability
+        var lines: [String] = []
+        for group in groupedUnchecked {
+            lines.append("── \(group.category) ──")
+            lines.append(contentsOf: group.items.map { "• \($0.displayText)" })
+        }
+        guard !lines.isEmpty else { return }
+        let text = lines.joined(separator: "\n")
         let av = UIActivityViewController(activityItems: [text], applicationActivities: nil)
         if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
            let vc = windowScene.windows.first?.rootViewController {
@@ -126,6 +151,8 @@ struct ShoppingListView: View {
         }
     }
 }
+
+// MARK: - Row
 
 struct ShoppingItemRow: View {
     @EnvironmentObject private var store: DataStore
@@ -150,11 +177,13 @@ struct ShoppingItemRow: View {
 
             if item.isManual {
                 Spacer()
-                Image(systemName: "pencil").font(.caption2).foregroundColor(.secondary)
+                Image(systemName: "pencil").font(.caption2).foregroundColor(.tertiary)
             }
         }
     }
 }
+
+// MARK: - Manual add sheet
 
 struct AddManualItemView: View {
     @Environment(\.dismiss) private var dismiss

@@ -28,6 +28,7 @@
 		AA000020 /* DinnerPlannerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000020 /* DinnerPlannerTests.swift */; };
 		AA000021 /* DataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000021 /* DataStore.swift */; };
 		AA000022 /* EmptyStateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000022 /* EmptyStateView.swift */; };
+		AA000023 /* IngredientCategorizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000023 /* IngredientCategorizer.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -52,6 +53,7 @@
 		BB000020 /* DinnerPlannerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DinnerPlannerTests.swift; sourceTree = "<group>"; };
 		BB000021 /* DataStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataStore.swift; sourceTree = "<group>"; };
 		BB000022 /* EmptyStateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyStateView.swift; sourceTree = "<group>"; };
+		BB000023 /* IngredientCategorizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IngredientCategorizer.swift; sourceTree = "<group>"; };
 		CC000001 /* DinnerPlanner.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DinnerPlanner.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CC000002 /* DinnerPlannerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DinnerPlannerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		CC000003 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -117,6 +119,7 @@
 				BB000015 /* RecipeImportService.swift */,
 					BB000017 /* RemindersService.swift */,
 				BB000018 /* ShoppingListGenerator.swift */,
+				BB000023 /* IngredientCategorizer.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -247,6 +250,7 @@
 				AA000018 /* ShoppingListGenerator.swift in Sources */,
 				AA000021 /* DataStore.swift in Sources */,
 				AA000022 /* EmptyStateView.swift in Sources */,
+				AA000023 /* IngredientCategorizer.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
