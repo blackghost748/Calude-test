@@ -76,7 +76,7 @@ struct RecipeImportView: View {
 
     private func runImport() {
         errorMessage = nil; isLoading = true
-        Task {
+        Task { @MainActor in
             defer { isLoading = false }
             do {
                 importResult = selectedTab == .url

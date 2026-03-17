@@ -105,7 +105,7 @@ struct ShoppingListView: View {
 
     private func exportToReminders() {
         isExporting = true
-        Task {
+        Task { @MainActor in
             defer { isExporting = false }
             do {
                 try await RemindersService.exportToReminders(items: unchecked)
