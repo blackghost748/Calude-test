@@ -22,7 +22,6 @@
 		AA000013 /* ShoppingListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000013 /* ShoppingListView.swift */; };
 		AA000014 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000014 /* SettingsView.swift */; };
 		AA000015 /* RecipeImportService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000015 /* RecipeImportService.swift */; };
-		AA000016 /* CloudKitSharingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000016 /* CloudKitSharingService.swift */; };
 		AA000017 /* RemindersService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000017 /* RemindersService.swift */; };
 		AA000018 /* ShoppingListGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB000018 /* ShoppingListGenerator.swift */; };
 		AA000019 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BB000019 /* Assets.xcassets */; };
@@ -45,7 +44,6 @@
 		BB000013 /* ShoppingListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingListView.swift; sourceTree = "<group>"; };
 		BB000014 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		BB000015 /* RecipeImportService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeImportService.swift; sourceTree = "<group>"; };
-		BB000016 /* CloudKitSharingService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudKitSharingService.swift; sourceTree = "<group>"; };
 		BB000017 /* RemindersService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemindersService.swift; sourceTree = "<group>"; };
 		BB000018 /* ShoppingListGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingListGenerator.swift; sourceTree = "<group>"; };
 		BB000019 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -111,8 +109,7 @@
 			isa = PBXGroup;
 			children = (
 				BB000015 /* RecipeImportService.swift */,
-				BB000016 /* CloudKitSharingService.swift */,
-				BB000017 /* RemindersService.swift */,
+					BB000017 /* RemindersService.swift */,
 				BB000018 /* ShoppingListGenerator.swift */,
 			);
 			path = Services;
@@ -240,7 +237,6 @@
 				AA000013 /* ShoppingListView.swift in Sources */,
 				AA000014 /* SettingsView.swift in Sources */,
 				AA000015 /* RecipeImportService.swift in Sources */,
-				AA000016 /* CloudKitSharingService.swift in Sources */,
 				AA000017 /* RemindersService.swift in Sources */,
 				AA000018 /* ShoppingListGenerator.swift in Sources */,
 			);
