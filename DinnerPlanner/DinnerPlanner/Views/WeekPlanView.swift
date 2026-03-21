@@ -4,11 +4,12 @@ struct WeekPlanView: View {
     @EnvironmentObject private var store: DataStore
     @State private var selectedWeekday: Int?
     @State private var showingPicker = false
+    @State private var weekOffset: Int = 0
 
     private let weekdays = [(1,"Mo","Montag"),(2,"Di","Dienstag"),(3,"Mi","Mittwoch"),
                             (4,"Do","Donnerstag"),(5,"Fr","Freitag"),(6,"Sa","Samstag"),
                             (7,"So","Sonntag")]
-    private var weekID: String { MealEntry.currentWeekID() }
+    private var weekID: String { MealEntry.weekID(offsetWeeks: weekOffset) }
 
     private var navTitle: String {
         let kwPart = weekID.split(separator: "-").last.map { String($0.dropFirst()) } ?? "?"
@@ -46,6 +47,20 @@ struct WeekPlanView: View {
             .navigationTitle(navTitle)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    HStack(spacing: 4) {
+                        Button { weekOffset -= 1 } label: {
+                            Image(systemName: "chevron.left")
+                        }
+                        if weekOffset != 0 {
+                            Button("Heute") { weekOffset = 0 }
+                                .font(.subheadline)
+                        }
+                        Button { weekOffset += 1 } label: {
+                            Image(systemName: "chevron.right")
+                        }
+                    }
+                }
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Menu {
                         ForEach(weekdays, id: \.0) { day, short, label in
@@ -152,6 +167,7 @@ struct WeekPlanView: View {
     }
 
     private func isToday(_ weekday: Int) -> Bool {
+        guard weekOffset == 0 else { return false }
         let cal = Calendar(identifier: .iso8601)
         return cal.component(.weekday, from: Date()) == (weekday % 7) + 1
     }

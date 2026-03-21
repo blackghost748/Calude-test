@@ -19,8 +19,13 @@ struct MealEntry: Identifiable, Codable {
     }
 
     static func currentWeekID() -> String {
+        weekID(offsetWeeks: 0)
+    }
+
+    static func weekID(offsetWeeks: Int) -> String {
         let cal = Calendar(identifier: .iso8601)
-        let components = cal.dateComponents([.yearForWeekOfYear, .weekOfYear], from: Date())
+        let date = cal.date(byAdding: .weekOfYear, value: offsetWeeks, to: Date()) ?? Date()
+        let components = cal.dateComponents([.yearForWeekOfYear, .weekOfYear], from: date)
         let year = components.yearForWeekOfYear ?? 2024
         let week = components.weekOfYear ?? 1
         return String(format: "%04d-W%02d", year, week)
